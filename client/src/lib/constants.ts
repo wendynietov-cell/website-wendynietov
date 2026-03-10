@@ -1,4 +1,4 @@
-import { Home, Briefcase, BarChart, Newspaper, User, Mail, Utensils, Smartphone, Store, Camera, Terminal, Cloud, Shield } from "lucide-react";
+import { Home, Briefcase, BarChart, Newspaper, User, Mail, Utensils, Smartphone, Store, Camera, Terminal, Cloud, Shield, Zap, TrendingUp, Award, Users, CheckCircle, MessageCircle, Calendar as CalendarIcon } from "lucide-react";
 
 export const NAVIGATION = [
   { name: "Inicio", path: "/", icon: Home },
@@ -69,6 +69,112 @@ export const SERVICES = [
     problem: "Los creadores de contenido dependen de la monetización de un solo algoritmo (YouTube, TikTok) y carecen de infraestructura para escalar sus propios productos digitales.",
     solution: "Arquitectamos plataformas propias de membresía, comercio electrónico sin fricción y distribución omnicanal para que los creadores sean dueños de su audiencia."
   }
+];
+
+export const METRICS = [
+  { number: "50+", label: "Proyectos completados", icon: Zap },
+  { number: "15", label: "Años de experiencia combinada", icon: TrendingUp },
+  { number: "$2B+", label: "GMV manejado en plataformas", icon: Award },
+  { number: "3", label: "Países en LATAM", icon: Users }
+];
+
+export const CLIENTS = [
+  { name: "Rappi", logo: "🚀", description: "Plataforma de delivery" },
+  { name: "DiDi Food", logo: "🍽️", description: "Marketplace de comida" },
+  { name: "GhostKitchens", logo: "👻", description: "Red de cocinas ocultas" },
+  { name: "Emprendedores Tech", logo: "💡", description: "Startups de alto crecimiento" }
+];
+
+export const METHODOLOGY_STEPS = [
+  { 
+    number: "01", 
+    title: "Auditoría Estratégica", 
+    description: "Análisis profundo de arquitectura, flujos y puntos de dolor operativos."
+  },
+  { 
+    number: "02", 
+    title: "Diseño de Solución", 
+    description: "Prototipado de arquitectura escalable con roadmap de implementación."
+  },
+  { 
+    number: "03", 
+    title: "Implementación Ágil", 
+    description: "Sprints de 2 semanas con entregables tangibles y validación continua."
+  },
+  { 
+    number: "04", 
+    title: "Optimización & Escala", 
+    description: "Monitoreo de performance y ajustes para soportar crecimiento exponencial."
+  }
+];
+
+export const TESTIMONIALS = [
+  {
+    author: "Roberto García",
+    role: "CEO de GhostKitchens MX",
+    quote: "Pasamos de 5 a 50 marcas virtuales sin quebrar la infraestructura. Su arquitectura fue clave.",
+    image: "👨‍💼"
+  },
+  {
+    author: "Ana Martínez",
+    role: "Head of Operations, Rappi Colombia",
+    quote: "Redujimos el tiempo de entrega promedio en 12% solo replanteando el algoritmo de matching.",
+    image: "👩‍💼"
+  },
+  {
+    author: "Carlos Ruiz",
+    role: "Co-founder, StartUp Tech LATAM",
+    quote: "Nos ayudó a escalar de 100k a 5M USD en GMV sin contratar un equipo gigante.",
+    image: "👨‍💼"
+  }
+];
+
+export const PUBLICATIONS = [
+  {
+    title: "Arquitectura de Microservicios para Marketplaces",
+    publisher: "Dev.to",
+    date: "Marzo 2024",
+    url: "#"
+  },
+  {
+    title: "Optimización de algoritmos de matching en delivery",
+    publisher: "Medium",
+    date: "Febrero 2024",
+    url: "#"
+  },
+  {
+    title: "Ghost Kitchens: La siguiente ola del restaurantaje digital",
+    publisher: "TechCrunch Latam",
+    date: "Enero 2024",
+    url: "#"
+  }
+];
+
+export const FAQ = [
+  {
+    question: "¿Cuál es el tiempo mínimo de compromiso?",
+    answer: "Iniciamos con un diagnóstico de 2 semanas. Luego, ofrecemos retainers flexibles de 1 a 3 meses según la complejidad del proyecto."
+  },
+  {
+    question: "¿Cómo es el proceso de consultoría?",
+    answer: "Comenzamos con una auditoría, luego diseñamos la solución, implementamos en sprints ágiles y optimizamos continuamente basado en métricas."
+  },
+  {
+    question: "¿Qué sectores han visto más impacto?",
+    answer: "Delivery, ghost kitchens, e-commerce y creator economy. Cualquier sector con crecimiento exponencial y necesidades de escala."
+  },
+  {
+    question: "¿Trabajan con equipos distribuidos?",
+    answer: "Sí, toda mi experiencia es con equipos en LATAM. Manejo diferentes zonas horarias sin problema."
+  }
+];
+
+export const AGENDA_SLOTS = [
+  { time: "09:00 - 09:30", available: true },
+  { time: "10:00 - 10:30", available: true },
+  { time: "14:00 - 14:30", available: true },
+  { time: "15:00 - 15:30", available: false },
+  { time: "16:00 - 16:30", available: true }
 ];
 
 export const STUDIES = [
