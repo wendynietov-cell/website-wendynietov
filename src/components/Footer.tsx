@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Linkedin, Twitter, Mail, CalendarDays } from "lucide-react";
+import { Linkedin, Twitter, Mail, CalendarDays, Lock } from "lucide-react";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -51,6 +51,13 @@ export function Footer() {
             <Mail size={15} />
             Email
           </a>
+          <Link
+            href="/admin/login"
+            className="flex items-center gap-1.5 text-white/20 hover:text-white/60 transition-colors text-xs"
+          >
+            <Lock size={12} />
+            Admin
+          </Link>
         </div>
       </div>
     </footer>
