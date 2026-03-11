@@ -1,82 +1,15 @@
 'use client';
 
 import { motion } from "framer-motion";
-import { METRICS, SERVICES, TESTIMONIALS, CLIENTS } from "@/lib/constants";
-import { ArrowRight, Briefcase, TrendingUp, Users, Zap, Award, Quote, Star, Menu, X, ChevronDown } from "lucide-react";
+import { METRICS, SERVICES, TESTIMONIALS } from "@/lib/constants";
+import { ArrowRight, Briefcase, Quote, UserCircle, Target, Rocket, Handshake, BarChart2, Settings, Globe } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
-import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
-import { NAVIGATION } from "@/lib/constants";
 
 export default function Home() {
-  const pathname = usePathname();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [pathname]);
   return (
     <main className="min-h-screen relative">
-      {/* Background atmosphere */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute w-[600px] h-[600px] rounded-full blur-[90px] opacity-[0.35] bg-gradient-to-r from-purple-500 to-transparent top-[-150px] right-[-100px] animate-pulse"></div>
-        <div className="absolute w-[500px] h-[500px] rounded-full blur-[90px] opacity-[0.35] bg-gradient-to-r from-pink-500 to-transparent bottom-[10%] left-[-120px] animate-pulse"></div>
-        <div className="absolute w-[350px] h-[350px] rounded-full blur-[90px] opacity-[0.18] bg-gradient-to-r from-emerald-400 to-transparent top-[40%] left-[40%] animate-pulse"></div>
-      </div>
-      
-      {/* Mesh grid */}
-      <div className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-b from-transparent via-emerald-400/4 to-transparent bg-[length:72px_72px]"></div>
-
-      {/* Mobile Navigation */}
-      <div className="md:hidden fixed top-0 left-0 w-full h-16 glass z-50 flex items-center justify-between px-6">
-        <span className="font-bold text-lg bg-gradient-to-r from-rose-500 to-purple-500 bg-clip-text text-transparent">TechConsult.</span>
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="text-white hover:text-emerald-400 transition-colors"
-        >
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {/* Mobile Menu Overlay */}
-      {mobileMenuOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          className="md:hidden fixed inset-0 z-40 bg-slate-900/95 backdrop-blur-xl pt-20 px-6 pb-6 overflow-y-auto"
-        >
-          <div className="flex flex-col space-y-6 mt-8">
-            {NAVIGATION.map((item) => (
-              <div key={item.path}>
-                <Link
-                  href={item.path}
-                  className={`flex items-center text-xl font-medium ${pathname === item.path ? "text-emerald-400" : "text-white"}`}
-                >
-                  <item.icon className="mr-4" size={24} />
-                  {item.name}
-                </Link>
-                {item.subLinks && (
-                  <div className="ml-10 mt-4 flex flex-col space-y-4 border-l border-white/10 pl-4">
-                    {item.subLinks.map((sub) => (
-                      <Link
-                        key={sub.path}
-                        href={sub.path}
-                        className={`block text-lg ${pathname === sub.path ? "text-emerald-400" : "text-white/70"}`}
-                      >
-                        {sub.name}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </motion.div>
-      )}
       {/* Enhanced Hero Section */}
-      <section className="min-h-screen grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] items-center px-6 md:px-16 pt-24 md:pt-16 relative z-1">
+      <section className="min-h-[calc(100vh-72px)] grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] items-center px-6 md:px-16 py-16 relative z-1">
         <div className="space-y-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -84,7 +17,7 @@ export default function Home() {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="inline-flex items-center gap-2 px-4 py-1.5 glass-card rounded-full"
           >
-            <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+            <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
             <span className="font-mono text-xs text-emerald-400 uppercase tracking-widest">Disponible para proyectos</span>
           </motion.div>
           
@@ -93,22 +26,23 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black leading-tight mb-4">
-              <span className="block text-white">Especialista en</span>
-              <span className="block italic font-light bg-gradient-to-r from-rose-500 to-purple-500 bg-clip-text text-transparent">Tech Sales</span>
-              <span className="block bg-gradient-to-r from-emerald-400 to-teal-500 bg-clip-text text-transparent">que cierra deals.</span>
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black leading-tight mb-4 tracking-tight">
+              <span className="block text-white">WENDY NIETO</span>
+              <span className="block italic font-light bg-gradient-to-r from-rose-500 to-purple-500 bg-clip-text text-transparent text-3xl md:text-4xl lg:text-5xl">
+                Estratega de Plataformas y Crecimiento Tech
+              </span>
             </h1>
           </motion.div>
-          
+
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-xl text-white/70 leading-relaxed max-w-lg"
           >
-            Hola, soy <strong className="text-emerald-300 font-semibold">Wendy Nieto</strong>. Ayudo a empresas tech a escalar su revenue con estrategia consultiva, pipelines sólidos y relaciones que duran. No solo vendo — <strong className="text-emerald-300 font-semibold">construyo.</strong>
+            Ayudo a restaurantes, hoteles, cocinas ocultas y e-commerces a multiplicar sus ingresos con estrategias de ventas basadas en datos y tecnología.
           </motion.p>
-          
+
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -116,21 +50,21 @@ export default function Home() {
             className="flex flex-col sm:flex-row gap-4"
           >
             <Link
-              href="#contact"
+              href="/servicios"
               className="inline-flex items-center gap-2 bg-gradient-to-r from-rose-500 to-purple-500 text-white px-9 py-4 rounded-full font-bold hover:shadow-lg hover:shadow-purple-500/40 transition-all"
             >
-              Trabajemos juntos
+              Ver servicios
               <ArrowRight size={20} />
             </Link>
             <Link
-              href="#services"
+              href="/contacto"
               className="inline-flex items-center gap-2 glass-card px-9 py-4 rounded-full font-bold hover:bg-white/10 transition-all border border-emerald-400/20"
             >
               <Briefcase size={20} />
-              Ver servicios
+              Agendar consultoría
             </Link>
           </motion.div>
-          
+
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -138,16 +72,12 @@ export default function Home() {
             className="flex gap-0 pt-10 border-t border-emerald-400/10"
           >
             <div className="flex-1 pr-8 border-r border-emerald-400/10">
-              <div className="text-3xl font-black bg-gradient-to-r from-rose-500 to-purple-500 bg-clip-text text-transparent">+$5M</div>
-              <div className="font-mono text-xs text-white/60 uppercase tracking-wider mt-1">Deals cerrados</div>
-            </div>
-            <div className="flex-1 px-8 border-r border-emerald-400/10">
-              <div className="text-3xl font-black bg-gradient-to-r from-rose-500 to-purple-500 bg-clip-text text-transparent">120%</div>
-              <div className="font-mono text-xs text-white/60 uppercase tracking-wider mt-1">Quota achieved</div>
+              <div className="text-3xl font-black bg-gradient-to-r from-rose-500 to-purple-500 bg-clip-text text-transparent">+15</div>
+              <div className="font-mono text-xs text-white/60 uppercase tracking-wider mt-1">Proyectos</div>
             </div>
             <div className="flex-1 pl-8">
-              <div className="text-3xl font-black bg-gradient-to-r from-rose-500 to-purple-500 bg-clip-text text-transparent">8+ yrs</div>
-              <div className="font-mono text-xs text-white/60 uppercase tracking-wider mt-1">En tech sales</div>
+              <div className="text-3xl font-black bg-gradient-to-r from-rose-500 to-purple-500 bg-clip-text text-transparent">5 años</div>
+              <div className="font-mono text-xs text-white/60 uppercase tracking-wider mt-1">Ecosistema LatAm</div>
             </div>
           </motion.div>
         </div>
@@ -163,8 +93,8 @@ export default function Home() {
           <div className="absolute w-[360px] h-[360px] border border-emerald-400/8 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-spin" style={{ animationDirection: 'reverse' }}></div>
           
           <div className="w-[300px] glass-card rounded-3xl p-10 text-center relative z-5 border border-purple-500/30">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-r from-rose-500 to-purple-500 mx-auto mb-5 flex items-center justify-center text-4xl relative shadow-lg shadow-purple-500/50">
-              👩‍💼
+            <div className="w-20 h-20 rounded-full bg-gradient-to-r from-rose-500 to-purple-500 mx-auto mb-5 flex items-center justify-center relative shadow-lg shadow-purple-500/50">
+              <UserCircle size={44} className="text-white" />
             </div>
             <div className="text-xl font-bold text-white mb-2">Wendy Nieto</div>
             <div className="font-mono text-xs text-emerald-400 uppercase tracking-wider mb-6">Tech Sales · LATAM & USA</div>
@@ -348,54 +278,12 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
-              {
-                num: "01",
-                icon: "🎯",
-                name: "Sales Strategy",
-                desc: "Diseño de procesos end-to-end desde prospección hasta cierre. Metodologías consultivas para productos tech B2B y SaaS.",
-                tag: "Estrategia",
-                tagColor: "mint"
-              },
-              {
-                num: "02",
-                icon: "🚀",
-                name: "Pipeline Development",
-                desc: "Construcción y optimización de pipelines de alta conversión. ICP definition, qualification frameworks y deal acceleration.",
-                tag: "Crecimiento",
-                tagColor: "rose"
-              },
-              {
-                num: "03",
-                icon: "🤝",
-                name: "Enterprise Partnerships",
-                desc: "Relaciones estratégicas con C-suite. Negociaciones complejas con múltiples stakeholders y ciclos largos de venta.",
-                tag: "Enterprise",
-                tagColor: "purple"
-              },
-              {
-                num: "04",
-                icon: "📊",
-                name: "Sales Coaching",
-                desc: "Entrenamiento de equipos: objection handling, discovery calls efectivas y demos de alto impacto que cierran.",
-                tag: "Coaching",
-                tagColor: "mint"
-              },
-              {
-                num: "05",
-                icon: "⚙️",
-                name: "RevOps Consulting",
-                desc: "Optimización de tu stack de ventas: CRM, automatización, analytics y enablement para escalar revenue de forma sostenida.",
-                tag: "RevOps",
-                tagColor: "rose"
-              },
-              {
-                num: "06",
-                icon: "🌐",
-                name: "GTM Strategy",
-                desc: "Go-to-market para productos tech. Segmentación, positioning, pricing y expansión a nuevos mercados en LATAM y USA.",
-                tag: "GTM",
-                tagColor: "purple"
-              }
+              { num: "01", Icon: Target,   name: "Sales Strategy",        desc: "Diseño de procesos end-to-end desde prospección hasta cierre. Metodologías consultivas para productos tech B2B y SaaS.", tag: "Estrategia", tagColor: "mint" },
+              { num: "02", Icon: Rocket,   name: "Pipeline Development",  desc: "Construcción y optimización de pipelines de alta conversión. ICP definition, qualification frameworks y deal acceleration.", tag: "Crecimiento", tagColor: "rose" },
+              { num: "03", Icon: Handshake,name: "Enterprise Partnerships",desc: "Relaciones estratégicas con C-suite. Negociaciones complejas con múltiples stakeholders y ciclos largos de venta.", tag: "Enterprise", tagColor: "purple" },
+              { num: "04", Icon: BarChart2, name: "Sales Coaching",        desc: "Entrenamiento de equipos: objection handling, discovery calls efectivas y demos de alto impacto que cierran.", tag: "Coaching", tagColor: "mint" },
+              { num: "05", Icon: Settings,  name: "RevOps Consulting",     desc: "Optimización de tu stack de ventas: CRM, automatización, analytics y enablement para escalar revenue de forma sostenida.", tag: "RevOps", tagColor: "rose" },
+              { num: "06", Icon: Globe,     name: "GTM Strategy",          desc: "Go-to-market para productos tech. Segmentación, positioning, pricing y expansión a nuevos mercados en LATAM y USA.", tag: "GTM", tagColor: "purple" },
             ].map((service, i) => (
               <motion.div
                 key={i}
@@ -406,7 +294,9 @@ export default function Home() {
                 className="glass-card rounded-2xl p-8 border border-emerald-400/20 hover:border-emerald-400/25 transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-emerald-400/5 group"
               >
                 <div className="font-mono text-xs text-white/60 mb-7">{service.num}</div>
-                <div className="text-4xl mb-5 filter drop-shadow-lg drop-shadow-emerald-400/30">{service.icon}</div>
+                <div className="mb-5 w-12 h-12 rounded-xl bg-emerald-400/10 flex items-center justify-center">
+                  <service.Icon size={24} className="text-emerald-400" />
+                </div>
                 <h3 className="text-xl font-bold mb-3.5 text-white">{service.name}</h3>
                 <p className="text-white/70 leading-relaxed mb-6 text-sm">{service.desc}</p>
                 <span className={`inline-block font-mono text-xs uppercase tracking-wider px-3 py-1.5 rounded-full ${
@@ -450,7 +340,9 @@ export default function Home() {
                 className="glass-card rounded-2xl p-8 relative"
               >
                 <Quote className="absolute top-6 right-6 text-primary/20" size={32} />
-                <div className="text-2xl mb-4">{testimonial.image}</div>
+                <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-4">
+                  <testimonial.icon size={24} className="text-white/60" />
+                </div>
                 <p className="text-white/80 mb-6 leading-relaxed">
                   "{testimonial.quote}"
                 </p>

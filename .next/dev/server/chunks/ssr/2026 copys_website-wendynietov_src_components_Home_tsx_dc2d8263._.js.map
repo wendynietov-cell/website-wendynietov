@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///Users/wendynieto/2026%20copys/website-wendynietov/src/components/Home.tsx"],"sourcesContent":["'use client';\n\nexport default function Home() {\n  return (\n    <div className=\"min-h-screen bg-background text-foreground p-8\">\n      <div className=\"max-w-4xl mx-auto\">\n        <h1 className=\"text-4xl font-bold text-center mb-8 text-gradient\">\n          Bienvenido a Next.js\n        </h1>\n        <p className=\"text-center text-lg text-foreground/80\">\n          Tu sitio web ha sido migrado exitosamente a Next.js 16.1.6\n        </p>\n        <div className=\"mt-8 text-center\">\n          <p className=\"text-sm text-foreground/60\">\n            Servidor corriendo en: <span className=\"text-primary font-mono\">http://localhost:3000</span>\n          </p>\n        </div>\n      </div>\n    </div>\n  );\n}\n"],"names":[],"mappings":";;;;;AAAA;;AAEe,SAAS;IACtB,qBACE,uRAAC;QAAI,WAAU;kBACb,cAAA,uRAAC;YAAI,WAAU;;8BACb,uRAAC;oBAAG,WAAU;8BAAoD;;;;;;8BAGlE,uRAAC;oBAAE,WAAU;8BAAyC;;;;;;8BAGtD,uRAAC;oBAAI,WAAU;8BACb,cAAA,uRAAC;wBAAE,WAAU;;4BAA6B;0CACjB,uRAAC;gCAAK,WAAU;0CAAyB;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAM5E"}}]
-}

@@ -1,7 +1,8 @@
-import { Home, Briefcase, BarChart, Newspaper, User, Mail, Utensils, Smartphone, Store, Camera, Terminal, Cloud, Shield, Zap, TrendingUp, Award, Users, CheckCircle, MessageCircle, Calendar as CalendarIcon } from "lucide-react";
+import { Home, Briefcase, BarChart, Newspaper, User, Mail, Utensils, Smartphone, Store, Camera, Terminal, Cloud, Shield, Zap, TrendingUp, Award, Users, CheckCircle, MessageCircle, Calendar as CalendarIcon, Lightbulb, Ghost } from "lucide-react";
 
 export const NAVIGATION = [
   { name: "Inicio", path: "/", icon: Home },
+  { name: "Sobre Mí", path: "/sobre-mi", icon: User },
   { name: "Servicios", path: "/servicios", icon: Briefcase,
     subLinks: [
       { name: "Tecnología Restaurantes", path: "/servicios/tecnologia-restaurantes" },
@@ -12,7 +13,6 @@ export const NAVIGATION = [
   },
   { name: "Estudios", path: "/estudios", icon: BarChart },
   { name: "Insights", path: "/insights", icon: Newspaper },
-  { name: "Sobre Mí", path: "/sobre-mi", icon: User },
   { name: "Contacto", path: "/contacto", icon: Mail },
 ];
 
@@ -79,10 +79,10 @@ export const METRICS = [
 ];
 
 export const CLIENTS = [
-  { name: "Rappi", logo: "🚀", description: "Plataforma de delivery" },
-  { name: "DiDi Food", logo: "🍽️", description: "Marketplace de comida" },
-  { name: "GhostKitchens", logo: "👻", description: "Red de cocinas ocultas" },
-  { name: "Emprendedores Tech", logo: "💡", description: "Startups de alto crecimiento" }
+  { name: "Rappi", logo: Zap, description: "Plataforma de delivery" },
+  { name: "DiDi Food", logo: Utensils, description: "Marketplace de comida" },
+  { name: "GhostKitchens", logo: Ghost, description: "Red de cocinas ocultas" },
+  { name: "Emprendedores Tech", logo: Lightbulb, description: "Startups de alto crecimiento" }
 ];
 
 export const METHODOLOGY_STEPS = [
@@ -113,19 +113,19 @@ export const TESTIMONIALS = [
     author: "Roberto García",
     role: "CEO de GhostKitchens MX",
     quote: "Pasamos de 5 a 50 marcas virtuales sin quebrar la infraestructura. Su arquitectura fue clave.",
-    image: "👨‍💼"
+    icon: User
   },
   {
     author: "Ana Martínez",
     role: "Head of Operations, Rappi Colombia",
     quote: "Redujimos el tiempo de entrega promedio en 12% solo replanteando el algoritmo de matching.",
-    image: "👩‍💼"
+    icon: User
   },
   {
     author: "Carlos Ruiz",
     role: "Co-founder, StartUp Tech LATAM",
     quote: "Nos ayudó a escalar de 100k a 5M USD en GMV sin contratar un equipo gigante.",
-    image: "👨‍💼"
+    icon: User
   }
 ];
 
