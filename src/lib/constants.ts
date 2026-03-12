@@ -11,8 +11,17 @@ export const NAVIGATION = [
       { name: "Economía Creativa", path: "/servicios/economia-creativa" },
     ]
   },
-  { name: "Estudios", path: "/estudios", icon: BarChart },
-  { name: "Insights", path: "/insights", icon: Newspaper },
+  { name: "Portafolio", path: "/portafolio", icon: BarChart,
+    subLinks: [
+      { name: "Plantillas", path: "/portafolio/plantillas" },
+      { name: "Diseños", path: "/portafolio/disenos" },
+      { name: "Proyectos", path: "/portafolio/proyectos" },
+      { name: "IA", path: "/portafolio/ia" },
+      { name: "Redes Sociales", path: "/portafolio/redes-sociales" },
+      { name: "Videos", path: "/portafolio/videos" },
+    ]
+  },
+  { name: "Blog", path: "/blog", icon: Newspaper },
   { name: "Contacto", path: "/contacto", icon: Mail },
 ];
 

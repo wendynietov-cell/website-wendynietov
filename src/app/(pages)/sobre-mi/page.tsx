@@ -1,674 +1,638 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Github as GithubIcon, Linkedin as LinkedinIcon, Download, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { Download, Linkedin, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 
-/* ─── PALETA OFICIAL ─────────────────────────────────────── */
-// Purple:      #b44fdf  /  rgba(180,79,223,...)
-// Pink:        #e040a0  /  rgba(224,64,160,...)
-// Teal:        #5effd8  /  rgba(94,255,216,...)
-// Light Indigo:#a5b4fc  /  rgba(165,180,252,...)
+/* ─── PALETA ────────────────────────────────────────────────── */
+const C = {
+  purple: "#b44fdf",  purpleA: "rgba(180,79,223,",
+  pink:   "#e040a0",  pinkA:   "rgba(224,64,160,",
+  teal:   "#5effd8",  tealA:   "rgba(94,255,216,",
+  indigo: "#a5b4fc",  indigoA: "rgba(165,180,252,",
+  bg:     "#06060f",
+  // Fondo de página: oscuro opaco — máximo contraste para texto
+  pageL:  "rgba(8,6,20,.93)",
+  pageR:  "rgba(6,8,18,.92)",
+};
 
-/* ─── PÁGINAS ────────────────────────────────────────────── */
-const PAGES = [
-  { id: "intro",    num: "01", label: "Perfil",          accent: "rgba(180,79,223,",   hex: "#b44fdf" },
-  { id: "sales",    num: "02", label: "Ventas Tech",      accent: "rgba(224,64,160,",   hex: "#e040a0" },
-  { id: "cultural", num: "03", label: "Cultura",          accent: "rgba(94,255,216,",   hex: "#5effd8" },
-  { id: "dev",      num: "04", label: "Dev & Builder",    accent: "rgba(165,180,252,",  hex: "#a5b4fc" },
-  { id: "stack",    num: "05", label: "Stack",            accent: "rgba(180,79,223,",   hex: "#b44fdf" },
-  { id: "cta",      num: "06", label: "Contacto",         accent: "rgba(224,64,160,",   hex: "#e040a0" },
-];
-
-/* ─── TAG (idéntico al original) ─────────────────────────── */
-function Tag({ label, color }: { label: string; color: "purple" | "pink" | "teal" | "indigo" }) {
-  const c = color === "purple" ? "#b44fdf"
-          : color === "pink"   ? "#e040a0"
-          : color === "teal"   ? "#5effd8"
-          : "#a5b4fc";
+/* ─── TAG ───────────────────────────────────────────────────── */
+function Tag({ label, c = C.purple }: { label: string; c?: string }) {
   return (
-    <span className="font-mono text-[9px] tracking-widest uppercase px-3 py-1.5 inline-block"
-      style={{ border:`1px solid ${c}44`, color:`${c}cc`, background:`${c}11`,
-        clipPath:"polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%)" }}>
-      {label}
-    </span>
+    <span style={{
+      fontFamily: "monospace", fontSize: 10, letterSpacing: "0.11em",
+      textTransform: "uppercase", padding: "3px 10px", display: "inline-block",
+      color: `${c}dd`, border: `1px solid ${c}44`, background: `${c}14`,
+      clipPath: "polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%)",
+    }}>{label}</span>
   );
 }
 
-/* ─── GLASS PANEL WRAPPER ────────────────────────────────── */
-function GlassPanel({ children, accent, className = "", style }: {
-  children: React.ReactNode;
-  accent: { hex: string; rgba: string };
-  className?: string;
-  style?: React.CSSProperties;
-}) {
+/* ─── STRIPE ANIMADA ────────────────────────────────────────── */
+function StripeTop({ color }: { color: string }) {
   return (
-    <div
-      className={`relative rounded-2xl overflow-hidden ${className}`}
-      style={{
-        background: `${accent.rgba}.025)`,
-        border: `1px solid ${accent.rgba}.18)`,
-        backdropFilter: "blur(28px) saturate(1.5)",
-        boxShadow: `inset 0 1px 0 rgba(255,255,255,.05), 0 32px 80px rgba(0,0,0,.35), 0 0 60px ${accent.rgba}.06)`,
-        ...style,
-      }}
-    >
-      {/* Top stripe */}
-      <div className="stripe-anim absolute top-0 left-0 right-0 h-0.5 z-10 pointer-events-none"
-        style={{ background: `linear-gradient(90deg,transparent,${accent.hex} 25%,#e040a0 50%,#5effd8 75%,transparent)` }} />
-      {/* Corners */}
-      <div className="absolute pointer-events-none" style={{ top:10, left:10, width:14, height:14, borderTop:`1px solid ${accent.rgba}.35)`, borderLeft:`1px solid ${accent.rgba}.35)` }} />
-      <div className="absolute pointer-events-none" style={{ top:10, right:10, width:14, height:14, borderTop:`1px solid ${accent.rgba}.35)`, borderRight:`1px solid ${accent.rgba}.35)` }} />
-      <div className="absolute pointer-events-none" style={{ bottom:10, left:10, width:14, height:14, borderBottom:`1px solid ${accent.rgba}.35)`, borderLeft:`1px solid ${accent.rgba}.35)` }} />
-      <div className="absolute pointer-events-none" style={{ bottom:10, right:10, width:14, height:14, borderBottom:`1px solid ${accent.rgba}.35)`, borderRight:`1px solid ${accent.rgba}.35)` }} />
-      {children}
+    <div style={{
+      position: "absolute", top: 0, left: 0, right: 0, height: 2, zIndex: 10,
+      background: `linear-gradient(90deg,transparent,${color} 40%,#e040a0 70%,transparent)`,
+      animation: "stripeAnim 4s ease-in-out infinite",
+    }} />
+  );
+}
+
+/* ─── PAGE LABEL ────────────────────────────────────────────── */
+function PageLabel({ num, label, color }: { num: string; label: string; color: string }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+      <span style={{ fontFamily: "monospace", fontSize: 11, color: `${color}66`, letterSpacing: "0.15em" }}>{num}</span>
+      <div style={{ width: 20, height: 1, background: `${color}55` }} />
+      <span style={{ fontFamily: "monospace", fontSize: 11, color: `${color}99`, letterSpacing: "0.12em", textTransform: "uppercase" }}>{label}</span>
     </div>
   );
 }
 
-/* ═══════════════════════════════════════════════════════════
-   PÁGINA 01 — INTRO (idéntico al hero original)
-═══════════════════════════════════════════════════════════ */
-function PageIntro() {
+/* ─── ACCENT SIDE BAR ──────────────────────────────────────── */
+/* Barra de 3px en el borde exterior — el color va aquí, no en el fondo */
+function AccentBar({ color, side }: { color: string; side: "left" | "right" }) {
   return (
-    <GlassPanel accent={{ hex:"#b44fdf", rgba:"rgba(180,79,223," }} className="grid grid-cols-1 md:grid-cols-2" style={{ minHeight:460 }}>
-      {/* Divider vertical */}
-      <div className="absolute top-[8%] left-1/2 bottom-[8%] w-px hidden md:block pointer-events-none"
-        style={{ background:"linear-gradient(to bottom,transparent,rgba(180,79,223,.2) 30%,rgba(224,64,160,.2) 70%,transparent)" }} />
-
-      {/* LEFT */}
-      <div className="flex flex-col justify-center gap-5 px-10 md:px-14 py-10 relative z-10">
-        <span className="font-mono text-[10px] tracking-[.13em] uppercase px-3 py-1 text-purple-300 self-start"
-          style={{ border:"1px solid rgba(180,79,223,.35)", background:"rgba(180,79,223,.07)", clipPath:"polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%)" }}>
-          Founder &amp; Developer
-        </span>
-
-        <h1 className="leading-[.9] select-none"
-          style={{ fontSize:"clamp(2.8rem,4.5vw,5rem)", fontFamily:"'Cormorant Garamond',serif", fontWeight:700, letterSpacing:"-.03em" }}>
-          <span style={{ color:"#fff" }}>Estratega de<br /></span>
-          <span className="name-shimmer font-light italic"
-            style={{ background:"linear-gradient(135deg,#a5b4fc 0%,#b44fdf 40%,#e040a0 80%,#5effd8 100%)",
-              WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>
-            Negocios &amp; Builder
-          </span>
-        </h1>
-
-        <p className="text-white/55 leading-[1.8] text-[.92rem] font-light max-w-md">
-          De liderar negociaciones políticas y expansión de mercados en Rappi, a construir la 
-          infraestructura tecnológica para la economía creativa en LATAM. No solo escribo código — 
-          diseño soluciones escalables con visión de negocio y gestión de stakeholders.
-        </p>
-
-        <div className="flex flex-wrap gap-3">
-          <a href="/cv.pdf" download
-            className="inline-flex items-center gap-2 font-mono text-[11px] font-bold tracking-widest uppercase px-6 py-3 text-white transition-all hover:-translate-y-0.5"
-            style={{ background:"linear-gradient(135deg,#b44fdf,#e040a0,#5effd8)",
-              clipPath:"polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%)",
-              boxShadow:"0 6px 24px rgba(180,79,223,.35)" }}>
-            <Download size={14} /> Descargar CV
-          </a>
-          <a href="https://linkedin.com/in/wendynietovasquez/" target="_blank" rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 font-mono text-[11px] tracking-[.06em] uppercase px-5 py-3 text-purple-200/70 transition-all hover:-translate-y-0.5 hover:text-white"
-            style={{ border:"1px solid rgba(165,180,252,.3)", background:"rgba(165,180,252,.05)",
-              clipPath:"polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)" }}>
-            <LinkedinIcon size={14} /> LinkedIn ↗
-          </a>
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 font-mono text-[11px] tracking-[.06em] uppercase px-4 py-3 text-purple-200/50 transition-all hover:-translate-y-0.5 hover:text-white"
-            style={{ border:"1px solid rgba(180,79,223,.2)", background:"rgba(180,79,223,.04)",
-              clipPath:"polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)" }}>
-            <GithubIcon size={14} />
-          </a>
-        </div>
-
-        <div className="inline-flex items-end gap-2">
-          <span style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:"3rem", fontWeight:700, lineHeight:1,
-            background:"linear-gradient(135deg,#e040a0,#a5b4fc)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>
-            9+
-          </span>
-          <span className="font-mono text-[9px] tracking-widest uppercase text-white/30 mb-2">Años de Trayectoria</span>
-        </div>
-      </div>
-
-      {/* RIGHT — foto */}
-      <div className="relative hidden md:block overflow-hidden">
-        <Image src="/sobremisection.png" alt="Wendy Nieto" fill
-          className="object-cover object-top"
-          style={{ mixBlendMode:"luminosity", filter:"contrast(1.05) brightness(0.88)" }} />
-        <div className="absolute inset-0 pointer-events-none" style={{
-          background:`linear-gradient(to right,rgba(6,6,16,.6) 0%,transparent 20%),
-                      linear-gradient(to left,rgba(6,6,16,.5) 0%,transparent 20%),
-                      linear-gradient(to top,rgba(6,6,16,.85) 0%,transparent 35%)`
-        }} />
-        <div className="absolute inset-0 pointer-events-none"
-          style={{ background:"linear-gradient(135deg,rgba(109,40,217,.15) 0%,transparent 50%,rgba(224,64,160,.08) 100%)", mixBlendMode:"color" }} />
-      </div>
-    </GlassPanel>
+    <div style={{
+      position: "absolute",
+      top: "12%", bottom: "12%",
+      [side]: 0,
+      width: 3,
+      background: `linear-gradient(to bottom, transparent, ${color} 30%, ${color} 70%, transparent)`,
+      opacity: 0.7,
+      zIndex: 5,
+    }} />
   );
 }
 
-/* ═══════════════════════════════════════════════════════════
-   PÁGINA 02 — VENTAS TECH
-═══════════════════════════════════════════════════════════ */
-function PageSales() {
-  const [active, setActive] = useState(0);
-  const acc = { hex:"#e040a0", rgba:"rgba(224,64,160," };
+/* ════════════════════════════════════════════════════════════
+   PÁGINAS
+════════════════════════════════════════════════════════════ */
 
-  const roles = [
-    {
-      period: "2022 — 2025", role: "Hunter Senior Top Deal", company: "Rappi",
-      tags: ["KAM","Hunter","Greenfield","Top Performer"] as const,
-      body: [
-        "Lideré la expansión nacional en ciudades Greenfield, abriendo mercados desde cero en más de 8 ciudades del país. Negocié contratos de alto impacto con grandes marcas del retail, restaurantes y consumo masivo — logrando acuerdos exclusivos y posicionamiento premium dentro de la plataforma.",
-        "Managé un portafolio de cuentas clave (KAM) con seguimiento continuo de GMV, rentabilidad y churn. Diseñé estrategias de pricing y estructuras de comisión adaptadas a cada mercado, coordinando equipos de operaciones y onboarding para garantizar la activación exitosa de nuevos socios.",
-        "Resultado: crecimiento 3× del portafolio asignado con reconocimiento como Top Performer a nivel nacional.",
-      ],
-    },
-    {
-      period: "2019 — 2022", role: "Sales Business Specialist", company: "Sector Tech & Plataformas",
-      tags: ["B2B","CRM","Pipeline","Consultivo"] as const,
-      body: [
-        "Desarrollo de relaciones comerciales B2B en el ecosistema tech, identificando oportunidades con medianas y grandes empresas. Construcción de propuestas de valor adaptadas a cada cliente, ciclos de venta consultivo y cierre de contratos de mediano y largo plazo.",
-        "Gestión de pipeline en CRM, análisis de datos de conversión y optimización de procesos para reducir el ciclo de cierre. Trabajo transversal con equipos de producto, marketing y operaciones para asegurar la correcta implementación de cada solución.",
-      ],
-    },
-  ];
-
-  const r = roles[active];
-
+/* Spread 0 — Portada izq: intro | der: foto */
+function S0Left() {
   return (
-    <GlassPanel accent={acc}>
-      <div className="flex flex-col gap-6 px-10 md:px-14 py-10">
-        {/* Header */}
-        <div>
-          <p className="font-mono text-[9px] tracking-[.13em] uppercase mb-1" style={{ color:"rgba(224,64,160,.7)" }}>
-            KAM · Hunter · Sales Business
-          </p>
-          <h2 style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:"clamp(2rem,3.5vw,3rem)", fontWeight:700, color:"#fff", lineHeight:1 }}>
-            Especialista en<br />
-            <span className="font-light italic" style={{ background:"linear-gradient(135deg,#e040a0,#a5b4fc)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>
-              Ventas &amp; Tech
-            </span>
-          </h2>
-        </div>
+    <div style={{ padding: "40px 36px 40px 44px", display: "flex", flexDirection: "column", gap: 18, height: "100%", justifyContent: "center", position: "relative", zIndex: 1 }}>
+      <StripeTop color={C.purple} />
+      <AccentBar color={C.purple} side="left" />
+      <PageLabel num="01" label="Perfil" color={C.purple} />
 
-        {/* Tabs */}
-        <div className="flex gap-3 flex-wrap">
-          {roles.map((ro, i) => (
-            <button key={i} onClick={() => setActive(i)}
-              className="font-mono text-[10px] tracking-[.08em] uppercase px-4 py-2 transition-all"
-              style={{
-                border: `1px solid ${i === active ? "rgba(224,64,160,.6)" : "rgba(224,64,160,.2)"}`,
-                background: i === active ? "rgba(224,64,160,.12)" : "rgba(224,64,160,.03)",
-                color: i === active ? "#e040a0" : "rgba(224,64,160,.5)",
-                clipPath: "polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%)",
-              }}>
-              {ro.company}
-            </button>
-          ))}
-        </div>
+      <span style={{
+        fontFamily: "monospace", fontSize: 10, letterSpacing: "0.13em", textTransform: "uppercase",
+        padding: "4px 12px", color: "#c084fc", alignSelf: "flex-start",
+        border: `1px solid ${C.purpleA}.4)`, background: `${C.purpleA}.08)`,
+        clipPath: "polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%)",
+      }}>Founder · Developer</span>
 
-        {/* Content */}
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8">
-          {/* Left: meta */}
-          <div className="flex flex-col gap-4">
-            <div>
-              <p className="font-mono text-[9px] tracking-widest uppercase text-white/30 mb-1">Período</p>
-              <p className="font-mono text-[11px]" style={{ color:"rgba(224,64,160,.8)" }}>{r.period}</p>
-            </div>
-            <div>
-              <p className="font-mono text-[9px] tracking-widest uppercase text-white/30 mb-1">Rol</p>
-              <p style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:"1.1rem", fontWeight:700, color:"#fff", lineHeight:1.2 }}>{r.role}</p>
-            </div>
-            <div>
-              <p className="font-mono text-[9px] tracking-widest uppercase text-white/30 mb-2">Skills</p>
-              <div className="flex flex-wrap gap-2">
-                {r.tags.map((t, i) => <Tag key={i} label={t} color="pink" />)}
-              </div>
-            </div>
-            {/* Divider vertical decorativo */}
-            <div className="hidden md:block flex-1 w-px self-stretch ml-auto mt-4"
-              style={{ background:"linear-gradient(to bottom,rgba(224,64,160,.2),transparent)" }} />
-          </div>
+      <h1 style={{
+        fontFamily: "'Cormorant Garamond', serif",
+        fontSize: "clamp(2rem,3.2vw,3.2rem)",
+        fontWeight: 700, letterSpacing: "-.03em", lineHeight: .9, color: "#fff", margin: 0,
+      }}>
+        Estratega de<br />
+        <span style={{
+          fontStyle: "italic", fontWeight: 400,
+          background: `linear-gradient(135deg,${C.indigo},${C.purple},${C.pink},${C.teal})`,
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+          backgroundSize: "200%", animation: "shimmer 5s ease infinite",
+        }}>Negocios &amp; Builder</span>
+      </h1>
 
-          {/* Right: body */}
-          <div className="flex flex-col gap-4">
-            {r.body.map((para, i) => (
-              <p key={i} className="text-white/55 leading-[1.85] text-[.9rem] font-light">{para}</p>
-            ))}
-          </div>
-        </div>
+      <p style={{ fontFamily: "'Outfit', sans-serif", color: "rgba(255,255,255,.72)", lineHeight: 1.85, fontSize: ".9rem", fontWeight: 300, maxWidth: 340, margin: 0 }}>
+        De liderar negociaciones políticas y expansión de mercados en Rappi, a construir
+        infraestructura tech para la economía creativa en LATAM.
+      </p>
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+        <a href="/cv.pdf" download style={{
+          display: "inline-flex", alignItems: "center", gap: 6,
+          fontFamily: "monospace", fontSize: 10, fontWeight: 700, letterSpacing: "0.1em",
+          textTransform: "uppercase", padding: "10px 20px", color: "#fff", textDecoration: "none",
+          background: `linear-gradient(135deg,${C.purple},${C.pink},${C.teal})`,
+          clipPath: "polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%)",
+          boxShadow: `0 6px 20px ${C.purpleA}.4)`,
+        }}><Download size={13} /> Descargar CV</a>
+
+        <a href="https://linkedin.com/in/wendynietovasquez/" target="_blank" rel="noopener noreferrer" style={{
+          display: "inline-flex", alignItems: "center", gap: 6,
+          fontFamily: "monospace", fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase",
+          padding: "10px 16px", color: "rgba(165,180,252,.8)", textDecoration: "none",
+          border: `1px solid ${C.indigoA}.35)`, background: `${C.indigoA}.07)`,
+          clipPath: "polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)",
+        }}><Linkedin size={13} /> LinkedIn</a>
       </div>
-    </GlassPanel>
+
+      <div style={{ display: "flex", alignItems: "flex-end", gap: 8, marginTop: 2 }}>
+        <span style={{
+          fontFamily: "'Cormorant Garamond', serif", fontSize: "3rem", fontWeight: 700, lineHeight: 1,
+          background: `linear-gradient(135deg,${C.pink},${C.indigo})`,
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+        }}>9+</span>
+        <span style={{ fontFamily: "monospace", fontSize: 10, color: "rgba(255,255,255,.35)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 4 }}>Años de trayectoria</span>
+      </div>
+    </div>
   );
 }
 
-/* ═══════════════════════════════════════════════════════════
-   PÁGINA 03 — CULTURA & GESTIÓN
-═══════════════════════════════════════════════════════════ */
-function PageCultural() {
-  const [active, setActive] = useState(0);
-  const acc = { hex:"#5effd8", rgba:"rgba(94,255,216," };
-
-  const roles = [
-    {
-      period: "2016 — 2019", role: "Coordinadora de Proyectos y Gestión de Alianzas", company: "Alcaldía Municipal",
-      tags: ["Sector Público","Patrocinios","Presupuesto +500M","50+ personas"] as const,
-      body: [
-        "Lideré la gestión de proyectos culturales de alto impacto social: festivales masivos, eventos regionales y programas de formación artística. Fui responsable de negociar con entidades privadas para conseguir patrocinios y alianzas estratégicas que complementaran el presupuesto público.",
-        "Administré presupuestos anuales superiores a $500M COP, coordinando equipos de más de 50 personas entre contratistas, voluntarios y funcionarios. Gestión de stakeholders políticos, gremios empresariales y comunidades para alinear objetivos y garantizar la viabilidad de cada proyecto.",
-      ],
-    },
-    {
-      period: "2014 — 2016", role: "Productora & Gestora Cultural", company: "Emisora Arauca · RCN Radio",
-      tags: ["Media","Radio","Pauta Publicitaria","Comunidad"] as const,
-      body: [
-        "Producción y dirección de contenido radiofónico cultural en uno de los medios de mayor audiencia regional. Gestión de pauta publicitaria y alianzas con anunciantes locales y nacionales, desarrollando propuestas de patrocinio para programas especiales y transmisiones en vivo.",
-        "Coordinación de eventos de difusión cultural, entrevistas con figuras del arte y política regional, y construcción de puentes entre comunidad, sector privado e instituciones. Experiencia directa en narrativa, comunicación de impacto y posicionamiento de marca en medios masivos.",
-      ],
-    },
-  ];
-
-  const r = roles[active];
-
+function S0Right() {
   return (
-    <GlassPanel accent={acc}>
-      <div className="flex flex-col gap-6 px-10 md:px-14 py-10">
-        <div>
-          <p className="font-mono text-[9px] tracking-[.13em] uppercase mb-1" style={{ color:"rgba(94,255,216,.7)" }}>
-            Sector Público · Media · Patrocinios
-          </p>
-          <h2 style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:"clamp(2rem,3.5vw,3rem)", fontWeight:700, color:"#fff", lineHeight:1 }}>
-            Fundraising &amp;<br />
-            <span className="font-light italic" style={{ background:"linear-gradient(135deg,#5effd8,#a5b4fc)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>
-              Gestión Cultural
-            </span>
-          </h2>
-        </div>
-
-        <div className="flex gap-3 flex-wrap">
-          {roles.map((ro, i) => (
-            <button key={i} onClick={() => setActive(i)}
-              className="font-mono text-[10px] tracking-[.08em] uppercase px-4 py-2 transition-all"
-              style={{
-                border: `1px solid ${i === active ? "rgba(94,255,216,.6)" : "rgba(94,255,216,.2)"}`,
-                background: i === active ? "rgba(94,255,216,.08)" : "rgba(94,255,216,.02)",
-                color: i === active ? "#5effd8" : "rgba(94,255,216,.45)",
-                clipPath: "polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%)",
-              }}>
-              {ro.period.split(" — ")[0]}
-            </button>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8">
-          <div className="flex flex-col gap-4">
-            <div>
-              <p className="font-mono text-[9px] tracking-widest uppercase text-white/30 mb-1">Período</p>
-              <p className="font-mono text-[11px]" style={{ color:"rgba(94,255,216,.8)" }}>{r.period}</p>
-            </div>
-            <div>
-              <p className="font-mono text-[9px] tracking-widest uppercase text-white/30 mb-1">Rol</p>
-              <p style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:"1.05rem", fontWeight:700, color:"#fff", lineHeight:1.25 }}>{r.role}</p>
-            </div>
-            <div>
-              <p className="font-mono text-[9px] tracking-widest uppercase text-white/30 mb-1">Empresa</p>
-              <p className="font-mono text-[10px]" style={{ color:"rgba(94,255,216,.7)" }}>{r.company}</p>
-            </div>
-            <div>
-              <p className="font-mono text-[9px] tracking-widest uppercase text-white/30 mb-2">Skills</p>
-              <div className="flex flex-wrap gap-2">
-                {r.tags.map((t, i) => <Tag key={i} label={t} color="teal" />)}
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col gap-4">
-            {r.body.map((para, i) => (
-              <p key={i} className="text-white/55 leading-[1.85] text-[.9rem] font-light">{para}</p>
-            ))}
-          </div>
-        </div>
+    <div style={{ position: "relative", height: "100%", overflow: "hidden" }}>
+      <StripeTop color={C.pink} />
+      <AccentBar color={C.pink} side="right" />
+      <Image src="/sobremisection.png" alt="Wendy Nieto" fill
+        style={{ objectFit: "cover", objectPosition: "top", mixBlendMode: "luminosity", filter: "contrast(1.08) brightness(.9)" }} />
+      <div style={{ position: "absolute", inset: 0, background: `linear-gradient(to right,${C.bg}aa 0%,transparent 30%), linear-gradient(to top,${C.bg}cc 0%,transparent 45%)` }} />
+      <div style={{ position: "absolute", inset: 0, background: `linear-gradient(135deg,rgba(109,40,217,.18),transparent 50%,rgba(224,64,160,.1))`, mixBlendMode: "color" }} />
+      <div style={{ position: "absolute", bottom: 36, left: 24, display: "flex", flexDirection: "column", gap: 6, zIndex: 2 }}>
+        {["Sales Strategy", "AI Tools", "Revenue Growth"].map((t, i) => (
+          <Tag key={i} label={t} c={i === 0 ? C.purple : i === 1 ? C.pink : C.teal} />
+        ))}
       </div>
-    </GlassPanel>
+      <div style={{ position: "absolute", top: 44, right: 20, display: "flex", flexDirection: "column", gap: 6, alignItems: "flex-end", zIndex: 2 }}>
+        {["Data-Driven", "CRM Expert", "Tech Stack"].map((t, i) => (
+          <Tag key={i} label={t} c={i === 0 ? C.indigo : i === 1 ? C.purple : C.pink} />
+        ))}
+      </div>
+    </div>
   );
 }
 
-/* ═══════════════════════════════════════════════════════════
-   PÁGINA 04 — DEV & BUILDER
-═══════════════════════════════════════════════════════════ */
-function PageDev() {
-  const [active, setActive] = useState(0);
-  const acc = { hex:"#a5b4fc", rgba:"rgba(165,180,252," };
-
-  const projects = [
-    {
-      name: "BuscArt", year: "2025", status: "Beta activa", statusColor: "#5effd8",
-      stack: ["Next.js","Node.js","TypeScript","Stripe","Supabase"] as const,
-      body: [
-        "Marketplace que conecta artistas emergentes con empresas que necesitan talento creativo para eventos, campañas y espacios. Arquitectura full-stack con panel de administración, sistema de pagos integrado, perfiles verificados y motor de búsqueda por categoría, ciudad y presupuesto.",
-        "Desde la visión de negocio hasta el deploy: diseñé el modelo de monetización, la UX/UI completa y el flujo de onboarding tanto para artistas como para empresas. Actualmente en fase beta con primeros usuarios activos en Medellín.",
-      ],
-    },
-    {
-      name: "Portfolio Personal", year: "2026", status: "Producción", statusColor: "#b44fdf",
-      stack: ["Next.js","Framer Motion","Tailwind","TypeScript"] as const,
-      body: [
-        "Diseño y desarrollo completo de este portafolio — desde la arquitectura de componentes hasta cada micro-animación. Sistema de diseño propio con glassmorphism, paleta de color coherente y animaciones CSS/JS para todos los efectos visuales principales.",
-        "Enfoque en performance, accesibilidad y experiencia móvil sin sacrificar la densidad visual del diseño.",
-      ],
-    },
-    {
-      name: "Proyectos Freelance", year: "2023 — hoy", status: "Continuo", statusColor: "#e040a0",
-      stack: ["React","WordPress","Webflow","APIs REST","Make"] as const,
-      body: [
-        "Desarrollo de soluciones web para clientes en sectores de salud, retail y servicios profesionales. Integraciones con CRMs, pasarelas de pago, automatizaciones y despliegue en infraestructura cloud.",
-        "Enfoque en soluciones pragmáticas orientadas al negocio: más conversiones, menos fricción, mayor autonomía operativa para el cliente.",
-      ],
-    },
-  ];
-
-  const p = projects[active];
-
+/* Spread 1 — Ventas */
+function S1Left() {
   return (
-    <GlassPanel accent={acc}>
-      <div className="flex flex-col gap-6 px-10 md:px-14 py-10">
-        <div>
-          <p className="font-mono text-[9px] tracking-[.13em] uppercase mb-1" style={{ color:"rgba(165,180,252,.7)" }}>
-            Full-Stack · Productos · Freelance
-          </p>
-          <h2 style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:"clamp(2rem,3.5vw,3rem)", fontWeight:700, color:"#fff", lineHeight:1 }}>
-            Programadora &amp;<br />
-            <span className="font-light italic" style={{ background:"linear-gradient(135deg,#a5b4fc,#b44fdf)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>
-              Creadora
-            </span>
-          </h2>
-        </div>
-
-        <div className="flex gap-3 flex-wrap">
-          {projects.map((pr, i) => (
-            <button key={i} onClick={() => setActive(i)}
-              className="font-mono text-[10px] tracking-[.08em] uppercase px-4 py-2 transition-all"
-              style={{
-                border: `1px solid ${i === active ? "rgba(165,180,252,.6)" : "rgba(165,180,252,.2)"}`,
-                background: i === active ? "rgba(165,180,252,.1)" : "rgba(165,180,252,.02)",
-                color: i === active ? "#a5b4fc" : "rgba(165,180,252,.45)",
-                clipPath: "polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%)",
-              }}>
-              {pr.name}
-            </button>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8">
-          <div className="flex flex-col gap-4">
-            <div>
-              <p className="font-mono text-[9px] tracking-widest uppercase text-white/30 mb-1">Año</p>
-              <p className="font-mono text-[11px]" style={{ color:"rgba(165,180,252,.8)" }}>{p.year}</p>
-            </div>
-            <div>
-              <p className="font-mono text-[9px] tracking-widest uppercase text-white/30 mb-1">Estado</p>
-              <span className="font-mono text-[9px] tracking-[.1em] uppercase px-3 py-1 inline-block"
-                style={{ border:`1px solid ${p.statusColor}44`, color:p.statusColor, background:`${p.statusColor}11`,
-                  clipPath:"polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%)" }}>
-                ● {p.status}
-              </span>
-            </div>
-            <div>
-              <p className="font-mono text-[9px] tracking-widest uppercase text-white/30 mb-2">Stack</p>
-              <div className="flex flex-wrap gap-2">
-                {p.stack.map((t, i) => <Tag key={i} label={t} color="indigo" />)}
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col gap-4">
-            {p.body.map((para, i) => (
-              <p key={i} className="text-white/55 leading-[1.85] text-[.9rem] font-light">{para}</p>
-            ))}
-          </div>
-        </div>
+    <div style={{ padding: "32px 36px 32px 44px", height: "100%", display: "flex", flexDirection: "column", gap: 8, position: "relative", zIndex: 1 }}>
+      <StripeTop color={C.pink} />
+      <AccentBar color={C.pink} side="left" />
+      <PageLabel num="02" label="Ventas Tech" color={C.pink} />
+      <div style={{ display: "flex", alignItems: "baseline", gap: 10, flexWrap: "wrap" }}>
+        <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.25rem", fontWeight: 700, color: "#fff", lineHeight: 1.1, margin: 0 }}>
+          Hunter Senior · <span style={{ fontStyle: "italic", fontWeight: 400, color: C.pink }}>Top Deal</span>
+        </h2>
+        <span style={{ fontFamily: "monospace", fontSize: 10, color: `${C.pink}88`, letterSpacing: "0.1em", textTransform: "uppercase" }}>Rappi · 2022—2025</span>
       </div>
-    </GlassPanel>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+        {["KAM","Hunter","Greenfield","Top Performer"].map((t,i) => <Tag key={i} label={t} c={C.pink} />)}
+      </div>
+      <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 12, paddingTop: 4 }}>
+        {[
+          "Lideré la expansión nacional en ciudades Greenfield, abriendo mercados desde cero en más de 8 ciudades. Negocié contratos con grandes marcas del retail, restaurantes y consumo masivo — logrando acuerdos exclusivos y posicionamiento premium.",
+          "Managé un portafolio de cuentas clave con seguimiento continuo de GMV, rentabilidad y churn. Diseñé estrategias de pricing y estructuras de comisión adaptadas a cada mercado regional.",
+          "Resultado: crecimiento 3× del portafolio con reconocimiento como Top Performer nacional.",
+          "Desarrollo de estrategias de entrada a nuevos mercados con análisis competitivo y posicionamiento diferenciado. Implementación de modelos de negocio adaptados a las características locales de cada región.",
+          "Coordinación de equipos multidisciplinarios para asegurar la ejecución exitosa de planes de expansión. Monitoreo constante de KPIs y métricas de performance para optimizar resultados.",
+        ].map((p, i) => <p key={i} style={{ fontFamily: "'Outfit', sans-serif", color: "rgba(255,255,255,.82)", lineHeight: 1.9, fontSize: ".93rem", fontWeight: 300, margin: 0 }}>{p}</p>)}
+      </div>
+    </div>
   );
 }
 
-/* ═══════════════════════════════════════════════════════════
-   PÁGINA 05 — STACK & SKILLS (grid de tags, misma estética)
-═══════════════════════════════════════════════════════════ */
-function PageStack() {
-  const acc = { hex:"#b44fdf", rgba:"rgba(180,79,223," };
+function S1Right() {
+  return (
+    <div style={{ padding: "32px 44px 32px 36px", height: "100%", display: "flex", flexDirection: "column", gap: 8, position: "relative", zIndex: 1 }}>
+      <StripeTop color={C.purple} />
+      <AccentBar color={C.purple} side="right" />
+      <PageLabel num="02b" label="Sales Business" color={C.purple} />
+      <div style={{ display: "flex", alignItems: "baseline", gap: 10, flexWrap: "wrap" }}>
+        <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.25rem", fontWeight: 700, color: "#fff", lineHeight: 1.1, margin: 0 }}>
+          Sales Business · <span style={{ fontStyle: "italic", fontWeight: 400, color: C.purple }}>Specialist</span>
+        </h2>
+        <span style={{ fontFamily: "monospace", fontSize: 10, color: `${C.purple}88`, letterSpacing: "0.1em", textTransform: "uppercase" }}>Tech & Plataformas · 2019—2022</span>
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+        {["B2B","CRM","Pipeline","Consultivo"].map((t,i) => <Tag key={i} label={t} c={C.purple} />)}
+      </div>
+      <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 12, paddingTop: 4 }}>
+        {[
+          "Desarrollo de relaciones comerciales B2B en el ecosistema tech con medianas y grandes empresas. Propuestas de valor adaptadas, venta consultiva y cierre de contratos de mediano y largo plazo.",
+          "Gestión de pipeline CRM, análisis de conversión y optimización de procesos para reducir el ciclo de cierre. Trabajo transversal con equipos de producto, marketing y operaciones.",
+          "Implementación de sistemas de seguimiento y automatización de procesos de venta para mejorar eficiencia y escalabilidad del equipo comercial.",
+          "Análisis de datos y métricas para identificar oportunidades de mejora y optimización continua de estrategias comerciales.",
+        ].map((p, i) => <p key={i} style={{ fontFamily: "'Outfit', sans-serif", color: "rgba(255,255,255,.82)", lineHeight: 1.9, fontSize: ".93rem", fontWeight: 300, margin: 0 }}>{p}</p>)}
+      </div>
+    </div>
+  );
+}
+
+/* Spread 2 — Cultural */
+function S2Left() {
+  return (
+    <div style={{ padding: "32px 36px 32px 44px", height: "100%", display: "flex", flexDirection: "column", gap: 8, position: "relative", zIndex: 1 }}>
+      <StripeTop color={C.teal} />
+      <AccentBar color={C.teal} side="left" />
+      <PageLabel num="03" label="Cultura & Gestión" color={C.teal} />
+      <div style={{ display: "flex", alignItems: "baseline", gap: 10, flexWrap: "wrap" }}>
+        <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.25rem", fontWeight: 700, color: "#fff", lineHeight: 1.1, margin: 0 }}>
+          Coordinadora · <span style={{ fontStyle: "italic", fontWeight: 400, color: C.teal }}>Proyectos & Alianzas</span>
+        </h2>
+        <span style={{ fontFamily: "monospace", fontSize: 10, color: `${C.teal}88`, letterSpacing: "0.1em", textTransform: "uppercase" }}>Alcaldía · 2016—2019</span>
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+        {["Sector Público","Patrocinios","$500M+ COP","50+ personas"].map((t,i) => <Tag key={i} label={t} c={C.teal} />)}
+      </div>
+      <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 12, paddingTop: 4 }}>
+        {[
+          "Lideré proyectos culturales de alto impacto: festivales masivos, eventos regionales y programas de formación artística. Responsable de negociar con entidades privadas para conseguir patrocinios complementarios al presupuesto público.",
+          "Administré presupuestos superiores a $500M COP coordinando equipos de más de 50 personas. Gestión de stakeholders políticos, gremios empresariales y comunidades.",
+        ].map((p, i) => <p key={i} style={{ fontFamily: "'Outfit', sans-serif", color: "rgba(255,255,255,.82)", lineHeight: 1.9, fontSize: ".93rem", fontWeight: 300, margin: 0 }}>{p}</p>)}
+      </div>
+    </div>
+  );
+}
+
+function S2Right() {
+  return (
+    <div style={{ padding: "32px 44px 32px 36px", height: "100%", display: "flex", flexDirection: "column", gap: 8, position: "relative", zIndex: 1 }}>
+      <StripeTop color={C.indigo} />
+      <AccentBar color={C.indigo} side="right" />
+      <PageLabel num="03b" label="Media & Radio" color={C.indigo} />
+      <div style={{ display: "flex", alignItems: "baseline", gap: 10, flexWrap: "wrap" }}>
+        <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.25rem", fontWeight: 700, color: "#fff", lineHeight: 1.1, margin: 0 }}>
+          Productora · <span style={{ fontStyle: "italic", fontWeight: 400, color: C.indigo }}>Gestora Cultural</span>
+        </h2>
+        <span style={{ fontFamily: "monospace", fontSize: 10, color: `${C.indigo}88`, letterSpacing: "0.1em", textTransform: "uppercase" }}>RCN Radio · 2014—2016</span>
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+        {["Radio","Pauta","Comunidad","Narrativa"].map((t,i) => <Tag key={i} label={t} c={C.indigo} />)}
+      </div>
+      <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 12, paddingTop: 4 }}>
+        {[
+          "Producción y dirección de contenido radiofónico cultural en uno de los medios de mayor audiencia regional. Gestión de pauta publicitaria y alianzas con anunciantes locales y nacionales.",
+          "Coordinación de eventos culturales, entrevistas con figuras del arte y política regional. Construcción de puentes entre comunidad, sector privado e instituciones. Narrativa y posicionamiento de marca en medios masivos.",
+        ].map((p, i) => <p key={i} style={{ fontFamily: "'Outfit', sans-serif", color: "rgba(255,255,255,.82)", lineHeight: 1.9, fontSize: ".93rem", fontWeight: 300, margin: 0 }}>{p}</p>)}
+      </div>
+    </div>
+  );
+}
+
+/* Spread 3 — Dev */
+function S3Left() {
+  return (
+    <div style={{ padding: "32px 36px 32px 44px", height: "100%", display: "flex", flexDirection: "column", gap: 8, position: "relative", zIndex: 1 }}>
+      <StripeTop color={C.indigo} />
+      <AccentBar color={C.indigo} side="left" />
+      <PageLabel num="04" label="Dev & Builder" color={C.indigo} />
+      <div style={{ display: "flex", alignItems: "baseline", gap: 10, flexWrap: "wrap" }}>
+        <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.25rem", fontWeight: 700, color: "#fff", lineHeight: 1.1, margin: 0 }}>
+          BuscArt · <span style={{ fontStyle: "italic", fontWeight: 400, color: C.indigo }}>Marketplace</span>
+        </h2>
+        <span style={{ fontFamily: "monospace", fontSize: 10, color: `${C.indigo}88`, letterSpacing: "0.1em", textTransform: "uppercase" }}>Full-Stack · 2025</span>
+      </div>
+      <span style={{
+        fontFamily: "monospace", fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase",
+        padding: "4px 11px", alignSelf: "flex-start",
+        border: `1px solid ${C.teal}44`, color: C.teal, background: `${C.teal}12`,
+        clipPath: "polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%)",
+      }}>● Beta activa — Medellín</span>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+        {["Next.js","Node.js","TypeScript","Stripe","Supabase"].map((t,i) => <Tag key={i} label={t} c={C.indigo} />)}
+      </div>
+      <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 12, paddingTop: 4 }}>
+        {[
+          "Marketplace que conecta artistas emergentes con empresas que necesitan talento creativo. Arquitectura full-stack con panel admin, pagos integrados, perfiles verificados y motor de búsqueda por categoría, ciudad y presupuesto.",
+          "Desde la visión de negocio hasta el deploy: modelo de monetización, UX/UI completa y flujo de onboarding para artistas y empresas.",
+        ].map((p, i) => <p key={i} style={{ fontFamily: "'Outfit', sans-serif", color: "rgba(255,255,255,.82)", lineHeight: 1.9, fontSize: ".93rem", fontWeight: 300, margin: 0 }}>{p}</p>)}
+      </div>
+    </div>
+  );
+}
+
+function S3Right() {
+  return (
+    <div style={{ padding: "40px 44px 40px 36px", height: "100%", display: "flex", flexDirection: "column", gap: 18, position: "relative", zIndex: 1 }}>
+      <StripeTop color={C.purple} />
+      <AccentBar color={C.purple} side="right" />
+      <PageLabel num="04b" label="Más Proyectos" color={C.purple} />
+      {[
+        { name: "Portfolio Personal", year: "2026", status: "Producción", sc: C.purple, stack: ["Next.js","Framer Motion","Tailwind"], desc: "Diseño y desarrollo completo — arquitectura de componentes, micro-animaciones y sistema de diseño propio con glassmorphism." },
+        { name: "Proyectos Freelance", year: "2023—hoy", status: "Continuo", sc: C.pink, stack: ["React","WordPress","Webflow","Make"], desc: "Soluciones web para clientes en salud, retail y servicios. Integraciones CRM, pasarelas de pago y automatizaciones cloud." },
+      ].map((p, i) => (
+        <div key={i} style={{ padding: "16px 18px", background: "rgba(255,255,255,.03)", borderRadius: 10, border: `1px solid ${i === 0 ? C.purpleA : C.pinkA}.2)`, display: "flex", flexDirection: "column", gap: 8 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+            <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.15rem", fontWeight: 700, color: "#fff" }}>{p.name}</span>
+            <span style={{ fontFamily: "monospace", fontSize: 10, padding: "2px 8px", border: `1px solid ${p.sc}44`, color: p.sc, background: `${p.sc}12`, clipPath: "polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%)", textTransform: "uppercase", letterSpacing: "0.08em" }}>● {p.status}</span>
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+            {p.stack.map((t, j) => <Tag key={j} label={t} c={i === 0 ? C.purple : C.pink} />)}
+          </div>
+          <p style={{ color: "rgba(255,255,255,.58)", lineHeight: 1.75, fontSize: ".85rem", fontWeight: 300, margin: 0 }}>{p.desc}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* Spread 4 — Stack + CTA */
+function S4Left() {
   const sections = [
-    { title:"Sales & Revenue",  color:"pink"   as const, items:["KAM","Hunter Comercial","Sales Business","Greenfield Expansion","Pipeline CRM","Negociación B2B","Revenue Growth","Marketplace Ops"] },
-    { title:"Tech Stack",       color:"indigo" as const, items:["Next.js","React","Node.js","TypeScript","Supabase","Stripe","REST APIs","Git / GitHub"] },
-    { title:"Strategy",         color:"purple" as const, items:["Fundraising","Gestión de Alianzas","Patrocinios","Gestión Pública","Stakeholders","Presupuestos","Proyectos Culturales"] },
-    { title:"Tools & AI",       color:"teal"   as const, items:["AI Tools","Zapier / Make","Notion","Figma","HubSpot CRM","Webflow","Analytics","Vercel"] },
+    { title: "Sales & Revenue", c: C.pink,   items: ["KAM","Hunter","Greenfield","Pipeline CRM","Negociación B2B","Revenue Growth"] },
+    { title: "Tech Stack",      c: C.indigo,  items: ["Next.js","React","Node.js","TypeScript","Supabase","Stripe"] },
+    { title: "Strategy",        c: C.purple,  items: ["Fundraising","Alianzas","Patrocinios","Stakeholders","Presupuestos"] },
+    { title: "Tools & AI",      c: C.teal,    items: ["AI Tools","Make","Figma","HubSpot","Webflow","Vercel"] },
   ];
-
   return (
-    <GlassPanel accent={acc}>
-      <div className="flex flex-col gap-6 px-10 md:px-14 py-10">
-        <div>
-          <p className="font-mono text-[9px] tracking-[.13em] uppercase mb-1 text-white/30">Capacidades completas</p>
-          <h2 style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:"clamp(2rem,3.5vw,3rem)", fontWeight:700, color:"#fff", lineHeight:1 }}>
-            Hard Skills &amp;{" "}
-            <span className="font-light italic" style={{ background:"linear-gradient(135deg,#b44fdf,#e040a0,#5effd8)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>
-              Business
-            </span>
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {sections.map((s, i) => {
-            const borderColor = s.color === "pink" ? "rgba(224,64,160,.15)" : s.color === "indigo" ? "rgba(165,180,252,.15)" : s.color === "teal" ? "rgba(94,255,216,.15)" : "rgba(180,79,223,.15)";
-            const labelColor  = s.color === "pink" ? "rgba(224,64,160,.7)"  : s.color === "indigo" ? "rgba(165,180,252,.7)"  : s.color === "teal" ? "rgba(94,255,216,.7)"  : "rgba(180,79,223,.7)";
-            return (
-              <div key={i} className="rounded-xl p-5"
-                style={{ background:"rgba(255,255,255,.025)", border:`1px solid ${borderColor}` }}>
-                <p className="font-mono text-[9px] tracking-[.13em] uppercase mb-4" style={{ color:labelColor }}>{s.title}</p>
-                <div className="flex flex-wrap gap-2">
-                  {s.items.map((t, j) => <Tag key={j} label={t} color={s.color} />)}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+    <div style={{ padding: "40px 36px 40px 44px", height: "100%", display: "flex", flexDirection: "column", gap: 14, position: "relative", zIndex: 1 }}>
+      <StripeTop color={C.purple} />
+      <AccentBar color={C.purple} side="left" />
+      <PageLabel num="05" label="Stack & Skills" color={C.purple} />
+      <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(1.6rem,2.5vw,2.2rem)", fontWeight: 700, color: "#fff", lineHeight: 1, margin: 0 }}>
+        Hard Skills &amp;{" "}
+        <span style={{ fontStyle: "italic", fontWeight: 400, background: `linear-gradient(135deg,${C.purple},${C.pink},${C.teal})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Business</span>
+      </h2>
+      <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, alignContent: "start" }}>
+        {sections.map((s, i) => (
+          <div key={i} style={{ padding: "11px 13px", background: "rgba(255,255,255,.03)", borderRadius: 8, border: `1px solid ${s.c}25`, display: "flex", flexDirection: "column", gap: 7 }}>
+            <span style={{ fontFamily: "monospace", fontSize: 10, color: `${s.c}99`, letterSpacing: "0.12em", textTransform: "uppercase" }}>{s.title}</span>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+              {s.items.map((t, j) => <Tag key={j} label={t} c={s.c} />)}
+            </div>
+          </div>
+        ))}
       </div>
-    </GlassPanel>
+    </div>
   );
 }
 
-/* ═══════════════════════════════════════════════════════════
-   PÁGINA 06 — CTA (idéntico al original)
-═══════════════════════════════════════════════════════════ */
-function PageCTA() {
+function S4Right() {
   return (
-    <GlassPanel accent={{ hex:"#e040a0", rgba:"rgba(224,64,160," }}
-      className="flex flex-col md:flex-row items-center justify-between gap-6 px-10 py-12">
+    <div style={{ padding: "40px 44px 40px 36px", height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", gap: 22, position: "relative", zIndex: 1 }}>
+      <StripeTop color={C.pink} />
+      <AccentBar color={C.pink} side="right" />
+      <PageLabel num="06" label="Contacto" color={C.pink} />
       <div>
-        <p className="font-mono text-[9px] tracking-widest uppercase text-white/30 mb-2">¿Hablamos?</p>
-        <p style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:"clamp(1.6rem,3vw,2.4rem)", fontWeight:700, color:"#fff" }}>
-          Construyamos algo
-          <span className="name-shimmer font-light italic ml-3"
-            style={{ background:"linear-gradient(135deg,#a5b4fc,#b44fdf,#e040a0,#5effd8)",
-              WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundSize:"200%" }}>
+        <span style={{ fontFamily: "monospace", fontSize: 11, color: "rgba(255,255,255,.3)", letterSpacing: "0.12em", textTransform: "uppercase", display: "block", marginBottom: 10 }}>¿Hablamos?</span>
+        <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(1.8rem,3vw,2.6rem)", fontWeight: 700, color: "#fff", lineHeight: 1.05, margin: 0 }}>
+          Construyamos algo{" "}
+          <span style={{ fontStyle: "italic", fontWeight: 400, background: `linear-gradient(135deg,${C.indigo},${C.purple},${C.pink},${C.teal})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundSize: "200%", animation: "shimmer 5s ease infinite" }}>
             extraordinario
           </span>
         </p>
-        <p className="text-white/40 text-[.9rem] font-light mt-4 max-w-md leading-relaxed">
-          ¿Tienes un proyecto que necesita visión de negocio y ejecución técnica? 
-          Hablemos de cómo puedo ayudarte a construirlo.
-        </p>
       </div>
-
-      <div className="flex flex-col gap-3 shrink-0 items-start md:items-end">
-        <a href="/contacto"
-          className="inline-flex items-center gap-2 font-mono text-[11px] font-bold tracking-widest uppercase px-8 py-4 text-white transition-all hover:-translate-y-0.5"
-          style={{ background:"linear-gradient(135deg,#b44fdf,#e040a0,#5effd8)",
-            clipPath:"polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%)",
-            boxShadow:"0 6px 24px rgba(180,79,223,.35)" }}>
-          Trabajemos juntos <ArrowUpRight size={14} />
-        </a>
-        <a href="https://linkedin.com/in/wendynietovasquez/" target="_blank" rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 font-mono text-[11px] tracking-[.06em] uppercase px-6 py-3 text-purple-200/60 transition-all hover:-translate-y-0.5 hover:text-white"
-          style={{ border:"1px solid rgba(165,180,252,.25)", background:"rgba(165,180,252,.04)",
-            clipPath:"polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)" }}>
-          <LinkedinIcon size={13} /> LinkedIn ↗
-        </a>
+      <p style={{ fontFamily: "'Outfit', sans-serif", color: "rgba(255,255,255,.6)", lineHeight: 1.85, fontSize: ".9rem", fontWeight: 300, margin: 0 }}>
+        ¿Tienes un proyecto que necesita visión de negocio y ejecución técnica?
+        Hablemos de cómo puedo ayudarte a construirlo desde cero.
+      </p>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, alignItems: "flex-start" }}>
+        <a href="/contacto" style={{
+          display: "inline-flex", alignItems: "center", gap: 8,
+          fontFamily: "monospace", fontSize: 11, fontWeight: 700, letterSpacing: "0.1em",
+          textTransform: "uppercase", padding: "13px 26px", color: "#fff", textDecoration: "none",
+          background: `linear-gradient(135deg,${C.purple},${C.pink},${C.teal})`,
+          clipPath: "polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%)",
+          boxShadow: `0 6px 22px ${C.purpleA}.4)`,
+        }}>Trabajemos juntos <ArrowUpRight size={14} /></a>
+        <a href="https://linkedin.com/in/wendynietovasquez/" target="_blank" rel="noopener noreferrer" style={{
+          display: "inline-flex", alignItems: "center", gap: 8,
+          fontFamily: "monospace", fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase",
+          padding: "10px 20px", color: "rgba(165,180,252,.75)", textDecoration: "none",
+          border: `1px solid ${C.indigoA}.3)`, background: `${C.indigoA}.05)`,
+          clipPath: "polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)",
+        }}><Linkedin size={13} /> LinkedIn ↗</a>
       </div>
-    </GlassPanel>
+    </div>
   );
 }
 
-/* ═══════════════════════════════════════════════════════════
-   MAIN — LIBRO NAVEGABLE
-═══════════════════════════════════════════════════════════ */
-export default function SobreMiBook() {
-  const [current, setCurrent] = useState(0);
-  const [direction, setDirection] = useState<1 | -1>(1);
+/* ─── SPREADS ARRAY ─────────────────────────────────────────── */
+const SPREADS = [
+  { Left: S0Left, Right: S0Right },
+  { Left: S1Left, Right: S1Right },
+  { Left: S2Left, Right: S2Right },
+  { Left: S3Left, Right: S3Right },
+  { Left: S4Left, Right: S4Right },
+];
+
+/* ════════════════════════════════════════════════════════════
+   BOOK COMPONENT
+════════════════════════════════════════════════════════════ */
+export default function SobreMiLibro() {
+  const [spread, setSpread]         = useState(0);
+  const [flipping, setFlipping]     = useState(false);
+  const [flipDir, setFlipDir]       = useState<"next" | "prev">("next");
+  const [nextSpread, setNextSpread] = useState(0);
   const touchX = useRef<number | null>(null);
-  const total = PAGES.length;
+  const total  = SPREADS.length;
 
-  const goTo = useCallback((idx: number) => {
-    if (idx < 0 || idx >= total || idx === current) return;
-    setDirection(idx > current ? 1 : -1);
-    setCurrent(idx);
-  }, [current, total]);
-
-  const prev = () => goTo(current - 1);
-  const next = () => goTo(current + 1);
+  const flipTo = useCallback((target: number) => {
+    if (flipping || target === spread || target < 0 || target >= total) return;
+    setFlipDir(target > spread ? "next" : "prev");
+    setNextSpread(target);
+    setFlipping(true);
+    setTimeout(() => {
+      setSpread(target);
+      setFlipping(false);
+    }, 680);
+  }, [flipping, spread, total]);
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight") next();
-      if (e.key === "ArrowLeft")  prev();
+      if (e.key === "ArrowRight") flipTo(spread + 1);
+      if (e.key === "ArrowLeft")  flipTo(spread - 1);
     };
     window.addEventListener("keydown", h);
     return () => window.removeEventListener("keydown", h);
-  }, [current]);
+  }, [spread, flipTo]);
 
-  const page = PAGES[current];
-
-  const pageVariants = {
-    enter:  (dir: number) => ({ opacity: 0, x: dir > 0 ? 40 : -40 }),
-    center: { opacity: 1, x: 0 },
-    exit:   (dir: number) => ({ opacity: 0, x: dir > 0 ? -40 : 40 }),
-  };
+  const Cur  = SPREADS[spread];
+  const Next = SPREADS[nextSpread];
 
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400;1,700&display=swap');
-        @keyframes nameShimmer  { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
-        @keyframes stripeShimmer{ 0%,100%{opacity:1} 50%{opacity:.4} }
-        @keyframes blink        { 0%,100%{opacity:1} 50%{opacity:.15} }
-        @keyframes scanDown     { from{top:-4px} to{top:100vh} }
-        @keyframes trackSlide   { 0%{left:-6px;opacity:0} 20%{opacity:1} 100%{left:40px;opacity:0} }
-        .name-shimmer { animation: nameShimmer 5s ease infinite; background-size: 200%; }
-        .stripe-anim  { animation: stripeShimmer 4s ease-in-out infinite; }
-        .blink-dot    { animation: blink 1.8s infinite; }
-        .scanline-el  { animation: scanDown 7s linear infinite; }
-        .track-dot    { animation: trackSlide 2s ease-in-out infinite; }
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400;1,700&family=Outfit:wght@300;400&display=swap');
+        @keyframes shimmer    { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+        @keyframes stripeAnim { 0%,100%{opacity:1} 50%{opacity:.35} }
+        @keyframes blink      { 0%,100%{opacity:1} 50%{opacity:.15} }
+        @keyframes scanDown   { from{top:0} to{top:100vh} }
+        @keyframes trackSlide { 0%{left:-6px;opacity:0} 20%{opacity:1} 100%{left:40px;opacity:0} }
+
+        @keyframes flipPageNext {
+          0%   { transform: rotateY(0deg);    z-index: 10; }
+          49%  { transform: rotateY(-90deg);  z-index: 10; }
+          50%  { transform: rotateY(-90deg);  z-index: 10; }
+          100% { transform: rotateY(-180deg); z-index: 5;  }
+        }
+        @keyframes flipPagePrev {
+          0%   { transform: rotateY(-180deg); z-index: 10; }
+          50%  { transform: rotateY(-90deg);  z-index: 10; }
+          100% { transform: rotateY(0deg);    z-index: 5;  }
+        }
+        .flip-next { animation: flipPageNext 0.68s cubic-bezier(.4,0,.2,1) forwards; transform-origin: left center; }
+        .flip-prev { animation: flipPagePrev 0.68s cubic-bezier(.4,0,.2,1) forwards; transform-origin: right center; }
+        ::-webkit-scrollbar       { width: 3px; }
+        ::-webkit-scrollbar-thumb { background: rgba(180,79,223,.35); border-radius: 2px; }
+        * { box-sizing: border-box; }
       `}</style>
 
       {/* Scanline */}
-      <div className="scanline-el fixed top-0 left-0 right-0 h-0.5 z-0 pointer-events-none opacity-10"
-        style={{ background: "linear-gradient(90deg,transparent,#b44fdf,#e040a0,transparent)" }} />
+      <div style={{
+        position: "fixed", top: 0, left: 0, right: 0, height: 2,
+        background: "linear-gradient(90deg,transparent,#b44fdf,#e040a0,transparent)",
+        opacity: .1, pointerEvents: "none", zIndex: 0,
+        animation: "scanDown 7s linear infinite",
+      }} />
 
-      <main className="relative min-h-screen pt-4 pb-10 px-6 md:px-14 z-10"
+      <main
+        style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", padding: "16px 16px 24px", background: C.bg, fontFamily: "'Cormorant Garamond', Georgia, serif", position: "relative", zIndex: 1 }}
         onTouchStart={e => { touchX.current = e.touches[0].clientX; }}
         onTouchEnd={e => {
           if (touchX.current === null) return;
           const dx = e.changedTouches[0].clientX - touchX.current;
-          if (Math.abs(dx) > 50) dx < 0 ? next() : prev();
+          if (Math.abs(dx) > 50) dx < 0 ? flipTo(spread + 1) : flipTo(spread - 1);
           touchX.current = null;
-        }}>
-        <div className="max-w-5xl mx-auto space-y-5">
-
-          {/* ── Top bar (igual al original) ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
-            className="flex items-center gap-4 font-mono text-[10px] text-white/30 tracking-[.1em] uppercase">
-            <span>Sobre Mí · Perfil</span>
-            <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg,#b44fdf,transparent)" }} />
-            <span className="blink-dot w-1.5 h-1.5 rounded-full bg-purple-400 inline-block" />
-            <span>Wendy Nieto · 2026</span>
-          </motion.div>
-
-          {/* ── Página label ── */}
-          <div className="flex items-center gap-3">
-            <span className="font-mono text-[9px] tracking-[.15em] uppercase" style={{ color:`${page.hex}66` }}>
-              {page.num}
-            </span>
-            <div className="h-px w-8" style={{ background:`${page.hex}44` }} />
-            <span className="font-mono text-[9px] tracking-[.12em] uppercase" style={{ color:`${page.hex}88` }}>
-              {page.label}
-            </span>
-          </div>
-
-          {/* ── Contenido animado ── */}
-          <AnimatePresence mode="wait" custom={direction}>
-            <motion.div
-              key={current}
-              custom={direction}
-              variants={pageVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.28, ease: [0.23, 1, 0.32, 1] }}
-            >
-              {current === 0 && <PageIntro />}
-              {current === 1 && <PageSales />}
-              {current === 2 && <PageCultural />}
-              {current === 3 && <PageDev />}
-              {current === 4 && <PageStack />}
-              {current === 5 && <PageCTA />}
-            </motion.div>
-          </AnimatePresence>
-
-          {/* ── Navegación ── */}
-          <div className="flex items-center gap-4 pt-1">
-            {/* Prev */}
-            <button onClick={prev} disabled={current === 0}
-              className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[.08em] uppercase px-4 py-2.5 transition-all hover:-translate-y-0.5 disabled:opacity-20 disabled:cursor-default disabled:hover:translate-y-0"
-              style={{ border:`1px solid ${page.hex}33`, background:`${page.hex}08`,
-                color: `${page.hex}88`, clipPath:"polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%)" }}>
-              <ChevronLeft size={12} /> Anterior
-            </button>
-
-            {/* Dots */}
-            <div className="flex items-center gap-2 flex-1 justify-center">
-              {PAGES.map((p, i) => (
-                <button key={i} onClick={() => goTo(i)}
-                  className="transition-all duration-300 rounded-full"
-                  style={{
-                    width: i === current ? 22 : 7,
-                    height: 7,
-                    background: i === current ? p.hex : `${p.hex}33`,
-                    border: "none",
-                    cursor: "pointer",
-                    borderRadius: 4,
-                  }} />
-              ))}
-            </div>
-
-            {/* Next */}
-            <button onClick={next} disabled={current === total - 1}
-              className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[.08em] uppercase px-4 py-2.5 transition-all hover:-translate-y-0.5 disabled:opacity-20 disabled:cursor-default disabled:hover:translate-y-0"
-              style={{ border:`1px solid ${page.hex}55`, background:`${page.hex}15`,
-                color: page.hex, clipPath:"polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%)" }}>
-              Siguiente <ChevronRight size={12} />
-            </button>
-          </div>
-
-          {/* ── Scroll indicator (igual al original) ── */}
-          <div className="flex items-center gap-3 font-mono text-[9px] tracking-widest uppercase text-white/25">
-            <div className="relative w-10 h-px overflow-hidden" style={{ background:"linear-gradient(90deg,#b44fdf,transparent)" }}>
-              <div className="track-dot absolute -top-[2px] -left-1.5 w-1.5 h-1.5 rounded-full bg-purple-400" />
-            </div>
-            <span>Usa ← → o desliza · {current + 1} / {total}</span>
-          </div>
-
+        }}
+      >
+        {/* Top bar */}
+        <div style={{ width: "100%", maxWidth: 920, display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+          <span style={{ fontFamily: "monospace", fontSize: 10, color: "rgba(255,255,255,.28)", letterSpacing: "0.12em", textTransform: "uppercase" }}>Sobre Mí · Perfil</span>
+          <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg,rgba(180,79,223,.5),transparent)" }} />
+          <div style={{ width: 6, height: 6, borderRadius: "50%", background: C.purple, opacity: .8, animation: "blink 1.8s infinite" }} />
+          <span style={{ fontFamily: "monospace", fontSize: 10, color: "rgba(255,255,255,.28)", letterSpacing: "0.12em", textTransform: "uppercase" }}>Wendy Nieto · 2026</span>
         </div>
+
+        {/* LIBRO */}
+        <div style={{
+          width: "100%", maxWidth: 920,
+          height: "min(70vh, 580px)",
+          position: "relative",
+          perspective: "2200px",
+          perspectiveOrigin: "50% 50%",
+        }}>
+          {/* Sombra */}
+          <div style={{
+            position: "absolute", bottom: -24, left: "4%", right: "4%", height: 44,
+            background: "radial-gradient(ellipse,rgba(180,79,223,.28) 0%,transparent 70%)",
+            filter: "blur(14px)", pointerEvents: "none",
+          }} />
+
+          {/* PÁGINA IZQUIERDA */}
+          <div style={{
+            position: "absolute", top: 0, left: 0, width: "50%", height: "100%",
+            background: C.pageL,
+            border: "1px solid rgba(180,79,223,.22)",
+            borderRight: "none",
+            borderRadius: "14px 0 0 14px",
+            boxShadow: "inset 0 1px 0 rgba(255,255,255,.04), -6px 0 28px rgba(0,0,0,.5)",
+            overflow: "hidden",
+          }}>
+            {flipping && flipDir === "prev" ? <Next.Left /> : <Cur.Left />}
+          </div>
+
+          {/* ENCUADERNACIÓN */}
+          <div style={{
+            position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)",
+            width: 16, height: "100%", zIndex: 20, pointerEvents: "none",
+            background: "linear-gradient(90deg,rgba(0,0,0,.7) 0%,rgba(180,79,223,.12) 35%,rgba(224,64,160,.08) 50%,rgba(180,79,223,.12) 65%,rgba(0,0,0,.7) 100%)",
+            boxShadow: "0 0 16px rgba(180,79,223,.15)",
+          }}>
+            <div style={{ position: "absolute", top: "8%", bottom: "8%", left: "50%", transform: "translateX(-50%)", width: 1, background: "linear-gradient(to bottom,transparent,rgba(180,79,223,.5) 20%,rgba(224,64,160,.5) 80%,transparent)" }} />
+          </div>
+
+          {/* PÁGINA DERECHA */}
+          <div style={{
+            position: "absolute", top: 0, right: 0, width: "50%", height: "100%",
+            background: C.pageR,
+            border: "1px solid rgba(224,64,160,.18)",
+            borderLeft: "none",
+            borderRadius: "0 14px 14px 0",
+            boxShadow: "inset 0 1px 0 rgba(255,255,255,.03), 6px 0 28px rgba(0,0,0,.5)",
+            overflow: "hidden",
+          }}>
+            {flipping && flipDir === "next" ? <Next.Right /> : <Cur.Right />}
+          </div>
+
+          {/* HOJA QUE SE DOBLA */}
+          {flipping && (
+            <div
+              className={flipDir === "next" ? "flip-next" : "flip-prev"}
+              style={{
+                position: "absolute", top: 0,
+                left: flipDir === "next" ? "50%" : "0%",
+                width: "50%", height: "100%", zIndex: 10,
+                transformStyle: "preserve-3d",
+                transformOrigin: flipDir === "next" ? "left center" : "right center",
+              }}
+            >
+              <div style={{
+                position: "absolute", inset: 0, backfaceVisibility: "hidden",
+                background: flipDir === "next" ? C.pageR : C.pageL,
+                border: flipDir === "next" ? "1px solid rgba(224,64,160,.2)" : "1px solid rgba(180,79,223,.22)",
+                borderRadius: flipDir === "next" ? "0 14px 14px 0" : "14px 0 0 14px",
+                overflow: "hidden",
+                boxShadow: flipDir === "next"
+                  ? "inset -4px 0 18px rgba(0,0,0,.4), 4px 0 18px rgba(0,0,0,.5)"
+                  : "inset 4px 0 18px rgba(0,0,0,.4), -4px 0 18px rgba(0,0,0,.5)",
+              }}>
+                {flipDir === "next" ? <Cur.Right /> : <Cur.Left />}
+              </div>
+
+              <div style={{
+                position: "absolute", inset: 0, backfaceVisibility: "hidden",
+                transform: "rotateY(180deg)",
+                background: flipDir === "next" ? C.pageL : C.pageR,
+                border: flipDir === "next" ? "1px solid rgba(180,79,223,.22)" : "1px solid rgba(224,64,160,.18)",
+                borderRadius: flipDir === "next" ? "14px 0 0 14px" : "0 14px 14px 0",
+                overflow: "hidden",
+              }}>
+                {flipDir === "next" ? <Next.Left /> : <Next.Right />}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* NAVEGACIÓN */}
+        <div style={{ width: "100%", maxWidth: 920, display: "flex", alignItems: "center", gap: 12, marginTop: 14 }}>
+          <button
+            onClick={() => flipTo(spread - 1)}
+            disabled={spread === 0 || flipping}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 6,
+              fontFamily: "monospace", fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase",
+              padding: "8px 16px", background: "transparent", cursor: spread === 0 ? "default" : "pointer",
+              border: `1px solid rgba(180,79,223,${spread === 0 ? ".15" : ".4"})`,
+              color: spread === 0 ? "rgba(255,255,255,.15)" : "rgba(180,79,223,.85)",
+              clipPath: "polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%)",
+              transition: "all .2s",
+            }}>
+            <ChevronLeft size={12} /> Anterior
+          </button>
+
+          <div style={{ flex: 1, display: "flex", gap: 6, justifyContent: "center" }}>
+            {SPREADS.map((_, i) => (
+              <button key={i} onClick={() => flipTo(i)}
+                style={{
+                  width: i === spread ? 22 : 7, height: 7, borderRadius: 4, border: "none",
+                  cursor: "pointer", padding: 0,
+                  background: i === spread ? C.purple : `${C.purple}33`,
+                  transition: "all .3s ease",
+                }} />
+            ))}
+          </div>
+
+          <button
+            onClick={() => flipTo(spread + 1)}
+            disabled={spread === total - 1 || flipping}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 6,
+              fontFamily: "monospace", fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase",
+              padding: "8px 16px", cursor: spread === total - 1 ? "default" : "pointer",
+              border: `1px solid rgba(180,79,223,${spread === total - 1 ? ".15" : ".55"})`,
+              background: spread === total - 1 ? "transparent" : "rgba(180,79,223,.12)",
+              color: spread === total - 1 ? "rgba(255,255,255,.15)" : C.purple,
+              clipPath: "polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%)",
+              transition: "all .2s",
+            }}>
+            Siguiente <ChevronRight size={12} />
+          </button>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10, fontFamily: "monospace", fontSize: 10, color: "rgba(255,255,255,.22)", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+          <div style={{ position: "relative", width: 40, height: 1, overflow: "hidden", background: "linear-gradient(90deg,#b44fdf,transparent)" }}>
+            <div style={{ position: "absolute", top: -2, left: -6, width: 6, height: 6, borderRadius: "50%", background: C.purple, animation: "trackSlide 2s ease-in-out infinite" }} />
+          </div>
+          <span>Usa ← → o desliza · {spread + 1} / {total}</span>
+        </div>
+
       </main>
     </>
   );
