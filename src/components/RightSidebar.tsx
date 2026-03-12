@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NAVIGATION } from "@/lib/constants";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 
 export function RightSidebar() {
   const pathname = usePathname();
@@ -15,7 +15,6 @@ export function RightSidebar() {
 
   useEffect(() => { setMobileOpen(false); }, [pathname]);
 
-  // Close submenu when clicking outside
   useEffect(() => {
     function handler(e: MouseEvent) {
       if (submenuRef.current && !submenuRef.current.contains(e.target as Node)) {
@@ -28,22 +27,95 @@ export function RightSidebar() {
 
   return (
     <>
+      <style>{`
+        .nav-btn-cyber {
+          font-family: 'Space Mono', monospace;
+          font-size: .72rem;
+          letter-spacing: .08em;
+          text-transform: uppercase;
+          padding: 9px 22px;
+          border: 1px solid rgba(180,79,223,.7);
+          color: #c084fc;
+          background: rgba(180,79,223,.07);
+          clip-path: polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+          transition: all .3s;
+          text-decoration: none;
+          display: inline-block;
+          white-space: nowrap;
+        }
+        .nav-btn-cyber:hover {
+          background: rgba(180,79,223,.25);
+          color: #fff;
+          box-shadow: 0 0 22px rgba(180,79,223,.35);
+        }
+        .nav-link-cyber {
+          font-family: 'Space Mono', monospace;
+          font-size: .75rem;
+          color: rgba(240,234,255,0.45);
+          text-decoration: none;
+          letter-spacing: .07em;
+          text-transform: uppercase;
+          font-weight: 500;
+          transition: color .2s;
+        }
+        .nav-link-cyber:hover,
+        .nav-link-cyber.active {
+          color: #c084fc;
+        }
+        .submenu-link-cyber {
+          font-family: 'Space Mono', monospace;
+          font-size: .65rem;
+          color: rgba(240,234,255,0.4);
+          text-decoration: none;
+          letter-spacing: .06em;
+          text-transform: uppercase;
+          display: block;
+          padding: 8px 16px;
+          transition: color .2s, background .2s;
+        }
+        .submenu-link-cyber:hover,
+        .submenu-link-cyber.active {
+          color: #c084fc;
+          background: rgba(180,79,223,.07);
+        }
+        .logo-hex-svg { animation: hexPulse 4s ease-in-out infinite alternate; }
+        @keyframes hexPulse { from { opacity: .7 } to { opacity: 1 } }
+      `}</style>
+
       {/* ── Top Nav ── */}
-      <header className="fixed top-0 left-0 right-0 z-50 glass">
+      <header className="fixed top-0 left-0 right-0 z-50"
+        style={{
+          background: 'rgba(6,6,16,.82)',
+          backdropFilter: 'blur(18px)',
+          borderBottom: '1px solid rgba(180,79,223,.13)',
+        }}>
         <div className="flex items-center justify-between px-8 md:px-16 h-[72px]">
 
-          {/* Brand */}
-          <Link href="/" className="flex flex-col leading-none">
-            <span className="text-lg font-black tracking-tight bg-gradient-to-r from-rose-500 to-purple-500 bg-clip-text text-transparent">
-              Wendy Nieto
-            </span>
-            <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-[#5effd8] opacity-80 mt-0.5">
-              Estratega de Plataformas
-            </span>
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-3 no-underline">
+            <div className="relative w-9 h-9 flex items-center justify-center">
+              <svg className="logo-hex-svg absolute" width="36" height="36" viewBox="0 0 34 34">
+                <polygon points="17,2 31,10 31,24 17,32 3,24 3,10"
+                  fill="none" stroke="#b44fdf" strokeWidth="1.2" opacity=".75"/>
+                <polygon points="17,7 26,12 26,22 17,27 8,22 8,12"
+                  fill="rgba(180,79,223,.09)" stroke="#b44fdf" strokeWidth=".6" opacity=".5"/>
+              </svg>
+              <span style={{ fontFamily:"'Space Mono',monospace", fontSize:'.75rem', fontWeight:700, color:'#c084fc', letterSpacing:'.06em', position:'relative', zIndex:1 }}>
+                WN
+              </span>
+            </div>
+            <div className="flex flex-col leading-none">
+              <span style={{ fontFamily:"'Space Mono',monospace", fontSize:'.8rem', fontWeight:700, color:'#c084fc', letterSpacing:'.05em' }}>
+                Wendy Nieto
+              </span>
+              <span style={{ fontFamily:"'Space Mono',monospace", fontSize:'.52rem', color:'rgba(94,255,216,.7)', letterSpacing:'.12em', textTransform:'uppercase', marginTop:2 }}>
+                Tech Sales
+              </span>
+            </div>
           </Link>
 
           {/* Desktop links */}
-          <nav ref={submenuRef} className="hidden md:flex items-center gap-10 list-none">
+          <nav ref={submenuRef} className="hidden md:flex items-center gap-10">
             {NAVIGATION.map((item) => {
               const isActive = pathname === item.path ||
                 (item.subLinks?.some((s) => pathname === s.path));
@@ -54,12 +126,10 @@ export function RightSidebar() {
                     <>
                       <button
                         onClick={() => setOpenSubmenu(openSubmenu === item.name ? null : item.name)}
-                        className={`flex items-center gap-1 text-[13px] font-medium tracking-wide transition-colors ${
-                          isActive ? "text-[#5effd8]" : "text-white/55 hover:text-[#5effd8]"
-                        }`}
+                        className={`nav-link-cyber flex items-center gap-1 bg-transparent border-0 cursor-pointer ${isActive ? 'active' : ''}`}
                       >
                         {item.name}
-                        <ChevronDown size={13} className={`transition-transform ${openSubmenu === item.name ? "rotate-180" : ""}`} />
+                        <ChevronDown size={12} style={{ transition:'transform .2s', transform: openSubmenu === item.name ? 'rotate(180deg)' : 'rotate(0deg)' }} />
                       </button>
 
                       <AnimatePresence>
@@ -68,19 +138,19 @@ export function RightSidebar() {
                             initial={{ opacity: 0, y: 6 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 6 }}
-                            transition={{ duration: 0.18 }}
-                            className="absolute top-full left-0 mt-3 w-52 glass-card rounded-xl border border-white/10 py-2 shadow-xl"
+                            transition={{ duration: 0.16 }}
+                            className="absolute top-full left-0 mt-3 w-56 py-2 overflow-hidden"
+                            style={{
+                              background: 'rgba(6,6,16,.95)',
+                              border: '1px solid rgba(180,79,223,.2)',
+                              backdropFilter: 'blur(20px)',
+                              clipPath: 'polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)',
+                              boxShadow: '0 12px 40px rgba(0,0,0,.5)',
+                            }}
                           >
                             {item.subLinks.map((sub) => (
-                              <Link
-                                key={sub.path}
-                                href={sub.path}
-                                className={`block px-4 py-2.5 text-sm transition-colors ${
-                                  pathname === sub.path
-                                    ? "text-[#5effd8]"
-                                    : "text-white/55 hover:text-[#5effd8]"
-                                }`}
-                              >
+                              <Link key={sub.path} href={sub.path}
+                                className={`submenu-link-cyber ${pathname === sub.path ? 'active' : ''}`}>
                                 {sub.name}
                               </Link>
                             ))}
@@ -89,14 +159,8 @@ export function RightSidebar() {
                       </AnimatePresence>
                     </>
                   ) : (
-                    <Link
-                      href={item.path}
-                      className={`relative text-[13px] font-medium tracking-wide transition-colors group ${
-                        isActive ? "text-[#5effd8]" : "text-white/55 hover:text-[#5effd8]"
-                      }`}
-                    >
+                    <Link href={item.path} className={`nav-link-cyber ${isActive ? 'active' : ''}`}>
                       {item.name}
-                      <span className="absolute -bottom-1 left-0 h-px w-0 bg-gradient-to-r from-[#5effd8] to-[#00c9a7] transition-all duration-300 group-hover:w-full" />
                     </Link>
                   )}
                 </div>
@@ -105,17 +169,15 @@ export function RightSidebar() {
           </nav>
 
           {/* CTA */}
-          <Link
-            href="/contacto"
-            className="hidden md:inline-flex items-center bg-gradient-to-r from-rose-500 to-purple-600 text-white text-[13px] font-semibold px-7 py-2.5 rounded-full shadow-[0_0_24px_rgba(180,79,223,0.4)] hover:opacity-90 hover:-translate-y-px transition-all"
-          >
-            Agendar llamada
+          <Link href="/contacto" className="nav-btn-cyber hidden md:inline-block">
+            Agendar →
           </Link>
 
           {/* Mobile hamburger */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden text-white/70 hover:text-white transition-colors"
+            className="md:hidden transition-colors"
+            style={{ color: 'rgba(240,234,255,.7)', background:'none', border:'none', cursor:'pointer' }}
           >
             {mobileOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -129,30 +191,27 @@ export function RightSidebar() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="md:hidden fixed inset-0 z-40 bg-[#050d1a]/96 backdrop-blur-xl pt-[72px] px-6 pb-8 overflow-y-auto"
+            className="md:hidden fixed inset-0 z-40 pt-[72px] px-6 pb-8 overflow-y-auto"
+            style={{ background: 'rgba(6,6,16,.97)', backdropFilter: 'blur(20px)' }}
           >
-            <div className="flex flex-col space-y-1 mt-6">
+            <div className="flex flex-col mt-6 gap-1"
+              style={{ borderTop: '1px solid rgba(180,79,223,.13)', paddingTop: 24 }}>
               {NAVIGATION.map((item) => (
                 <div key={item.path}>
                   <Link
                     href={item.path}
-                    className={`flex items-center gap-3 px-3 py-3.5 rounded-xl text-lg font-medium transition-colors ${
-                      pathname === item.path ? "text-[#5effd8]" : "text-white/70"
-                    }`}
+                    className="nav-link-cyber flex items-center gap-3 py-3.5 px-2"
+                    style={{ fontSize: '.85rem' }}
                   >
-                    <item.icon size={20} />
+                    <item.icon size={16} style={{ opacity:.6 }} />
                     {item.name}
                   </Link>
                   {item.subLinks && (
-                    <div className="ml-11 border-l border-white/10 pl-4 mb-2 space-y-1">
+                    <div className="ml-10 pl-4 mb-2"
+                      style={{ borderLeft: '1px solid rgba(180,79,223,.15)' }}>
                       {item.subLinks.map((sub) => (
-                        <Link
-                          key={sub.path}
-                          href={sub.path}
-                          className={`block py-2 text-sm ${
-                            pathname === sub.path ? "text-[#5effd8]" : "text-white/50"
-                          }`}
-                        >
+                        <Link key={sub.path} href={sub.path}
+                          className={`submenu-link-cyber py-2 ${pathname === sub.path ? 'active' : ''}`}>
                           {sub.name}
                         </Link>
                       ))}
@@ -161,12 +220,10 @@ export function RightSidebar() {
                 </div>
               ))}
 
-              <div className="pt-4 border-t border-white/10">
-                <Link
-                  href="/contacto"
-                  className="block text-center bg-gradient-to-r from-rose-500 to-purple-600 text-white font-semibold py-3.5 rounded-full mt-2"
-                >
-                  Agendar llamada
+              <div className="pt-6 mt-2" style={{ borderTop: '1px solid rgba(180,79,223,.13)' }}>
+                <Link href="/contacto" className="nav-btn-cyber block text-center"
+                  style={{ clipPath: 'none', borderRadius: 4 }}>
+                  Agendar llamada →
                 </Link>
               </div>
             </div>
