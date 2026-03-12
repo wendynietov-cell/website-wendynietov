@@ -4,11 +4,11 @@ import { motion } from 'framer-motion';
 import { Quote } from 'lucide-react';
 import { TESTIMONIALS } from '@/lib/constants';
 
-// Accent colors cycling per card
+// Accent colors cycling per card — hero palette
 const ACCENTS = [
-  { color: '#10b981', rgb: '16,185,129' },
-  { color: '#c084fc', rgb: '192,132,252' },
-  { color: '#f472b6', rgb: '244,114,182' },
+  { color: '#5effd8', rgb: '94,255,216' },
+  { color: '#b44fdf', rgb: '180,79,223' },
+  { color: '#e040a0', rgb: '224,64,160' },
 ];
 
 const container = {
@@ -44,13 +44,13 @@ export function Testimonials() {
             style={{ marginBottom: '40px' }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-              <div style={{ width: '28px', height: '1px', background: 'linear-gradient(90deg, transparent, #10b981)' }} />
+              <div style={{ width: '28px', height: '1px', background: 'linear-gradient(90deg, transparent, #5effd8)' }} />
               <span style={{
                 fontFamily: "'Space Mono', monospace",
-                fontSize: '0.58rem', letterSpacing: '0.14em', textTransform: 'uppercase',
-                color: '#10b981', padding: '3px 10px',
-                border: '1px solid rgba(16,185,129,0.28)',
-                background: 'rgba(16,185,129,0.05)',
+                fontSize: '0.7rem', letterSpacing: '0.14em', textTransform: 'uppercase',
+                color: '#5effd8', padding: '3px 10px',
+                border: '1px solid rgba(94,255,216,0.28)',
+                background: 'rgba(94,255,216,0.05)',
                 clipPath: 'polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%)',
               }}>
                 Clientes
@@ -64,12 +64,12 @@ export function Testimonials() {
                 fontWeight: 700, lineHeight: 1.05, letterSpacing: '-0.02em', margin: 0,
               }}>
                 <span style={{
-                  background: 'linear-gradient(135deg, #e8f5f0 0%, #6ee7b7 50%, #10b981 100%)',
+                  background: 'linear-gradient(135deg, #f0eaff 0%, #c4b5fd 50%, #b44fdf 100%)',
                   WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
                 }}>Lo que dicen </span>
                 <span style={{
                   fontStyle: 'italic',
-                  background: 'linear-gradient(135deg, #f0c96a, #d4a843)',
+                  background: 'linear-gradient(135deg, #e040a0, #b44fdf)',
                   WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
                 }}>mis clientes</span>
               </h2>
@@ -185,7 +185,7 @@ export function Testimonials() {
                     </div>
                     <div style={{
                       fontFamily: "'Space Mono', monospace",
-                      fontSize: '0.52rem', letterSpacing: '0.09em',
+                      fontSize: '0.65rem', letterSpacing: '0.09em',
                       textTransform: 'uppercase',
                       color: `rgba(${ac.rgb},0.6)`,
                     }}>

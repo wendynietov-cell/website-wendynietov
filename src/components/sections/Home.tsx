@@ -1,6 +1,5 @@
 import { Hero }         from './Hero';
 import { Marquee }      from './Marquee';
-import { Specialties }  from './Specialties';
 import { Services }     from './Services';
 import { Testimonials } from './Testimonials';
 import { CTA }          from './CTA';
@@ -10,7 +9,6 @@ export default function Home() {
     <main className="min-h-screen relative">
       <Hero />
       <Marquee />
-      <Specialties />
       <Services />
       <Testimonials />
       <CTA />

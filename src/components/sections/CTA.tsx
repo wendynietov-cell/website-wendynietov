@@ -19,7 +19,7 @@ export function CTA() {
           100% { left: 160%; opacity: 0 }
         }
         @keyframes dotBlink {
-          0%,100% { opacity: 1; box-shadow: 0 0 6px #10b981; }
+          0%,100% { opacity: 1; box-shadow: 0 0 6px #5effd8; }
           50%      { opacity: 0.2; box-shadow: none; }
         }
       `}</style>
@@ -90,11 +90,11 @@ export function CTA() {
 
             {/* Label */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
-              <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#10b981', animation: 'dotBlink 1.8s infinite' }} />
+              <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#5effd8', animation: 'dotBlink 1.8s infinite' }} />
               <span style={{
                 fontFamily: "'Space Mono', monospace",
-                fontSize: '0.58rem', letterSpacing: '0.14em', textTransform: 'uppercase',
-                color: '#10b981',
+                fontSize: '0.7rem', letterSpacing: '0.14em', textTransform: 'uppercase',
+                color: '#5effd8',
               }}>
                 Disponible para proyectos
               </span>
@@ -139,8 +139,8 @@ export function CTA() {
             {/* Email */}
             <div style={{
               fontFamily: "'Space Mono', monospace",
-              fontSize: '0.62rem', letterSpacing: '0.1em',
-              color: 'rgba(16,185,129,0.6)',
+              fontSize: '0.72rem', letterSpacing: '0.1em',
+              color: 'rgba(94,255,216,0.65)',
               marginBottom: '4px',
             }}>
               wendy@wendynieto.com
@@ -152,18 +152,18 @@ export function CTA() {
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '10px',
                 padding: '13px 28px',
-                background: 'linear-gradient(135deg, #c084fc, #f472b6)',
+                background: 'linear-gradient(135deg, #b44fdf, #e040a0)',
                 color: '#fff',
                 fontFamily: "'Space Mono', monospace",
                 fontSize: '0.74rem', fontWeight: 700, letterSpacing: '0.07em', textTransform: 'uppercase',
                 textDecoration: 'none',
                 clipPath: 'polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%)',
-                boxShadow: '0 8px 28px rgba(192,132,252,0.35)',
+                boxShadow: '0 8px 28px rgba(180,79,223,0.35)',
                 transition: 'transform 0.22s ease, box-shadow 0.22s ease',
               }}
               onMouseEnter={e => {
                 (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)';
-                (e.currentTarget as HTMLElement).style.boxShadow = '0 14px 40px rgba(192,132,252,0.55)';
+                (e.currentTarget as HTMLElement).style.boxShadow = '0 14px 40px rgba(180,79,223,0.55)';
               }}
               onMouseLeave={e => {
                 (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';

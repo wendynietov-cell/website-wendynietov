@@ -11,7 +11,7 @@ const TAGS = [
 
 export function Marquee() {
   return (
-    <section className="py-10 overflow-hidden border-t border-white/5 border-b border-white/5 relative z-1">
+    <section className="py-10 overflow-hidden border-t border-b border-white/5 relative z-1">
       <div className="flex gap-16 animate-scroll">
         {[...Array(2)].map((_, i) => (
           <div key={i} className="flex gap-16 shrink-0">

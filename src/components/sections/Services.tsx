@@ -1,7 +1,6 @@
 'use client';
 
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
-import { useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Target, Rocket, Handshake, BarChart2, Settings, Globe } from 'lucide-react';
 
 const ITEMS = [
@@ -10,304 +9,213 @@ const ITEMS = [
     name: 'Sales Strategy',
     desc: 'Diseño de procesos end-to-end desde prospección hasta cierre. Metodologías consultivas para productos tech B2B y SaaS.',
     tag: 'Estrategia',
-    accent: '#10b981', accentRgb: '16,185,129',
+    accent: '#5effd8', accentRgb: '94,255,216',
   },
   {
     num: '02', Icon: Rocket,
     name: 'Pipeline Development',
     desc: 'Construcción y optimización de pipelines de alta conversión. ICP definition, qualification frameworks y deal acceleration.',
     tag: 'Crecimiento',
-    accent: '#f472b6', accentRgb: '244,114,182',
+    accent: '#e040a0', accentRgb: '224,64,160',
   },
   {
     num: '03', Icon: Handshake,
     name: 'Enterprise Partnerships',
     desc: 'Relaciones estratégicas con C-suite. Negociaciones complejas con múltiples stakeholders y ciclos largos de venta.',
     tag: 'Enterprise',
-    accent: '#c084fc', accentRgb: '192,132,252',
+    accent: '#b44fdf', accentRgb: '180,79,223',
   },
   {
     num: '04', Icon: BarChart2,
     name: 'Sales Coaching',
     desc: 'Entrenamiento de equipos: objection handling, discovery calls efectivas y demos de alto impacto que cierran.',
     tag: 'Coaching',
-    accent: '#10b981', accentRgb: '16,185,129',
+    accent: '#5effd8', accentRgb: '94,255,216',
   },
   {
     num: '05', Icon: Settings,
     name: 'RevOps Consulting',
     desc: 'Optimización de tu stack de ventas: CRM, automatización, analytics y enablement para escalar revenue de forma sostenida.',
     tag: 'RevOps',
-    accent: '#f472b6', accentRgb: '244,114,182',
+    accent: '#e040a0', accentRgb: '224,64,160',
   },
   {
     num: '06', Icon: Globe,
     name: 'GTM Strategy',
     desc: 'Go-to-market para productos tech. Segmentación, positioning, pricing y expansión a nuevos mercados en LATAM y USA.',
     tag: 'GTM',
-    accent: '#c084fc', accentRgb: '192,132,252',
+    accent: '#b44fdf', accentRgb: '180,79,223',
   },
 ];
 
+const fadeUp = (i: number) => ({
+  hidden: { opacity: 0, y: 22 },
+  show: {
+    opacity: 1, y: 0,
+    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94], delay: i * 0.07 },
+  },
+});
+
 export function Services() {
-  const [active, setActive] = useState<number | null>(null);
-  const sectionRef = useRef<HTMLElement>(null);
-  const trackRef   = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start start', 'end end'],
-  });
-
-  const rawX = useTransform(scrollYProgress, [0, 1], ['0%', '-62%']);
-  const x    = useSpring(rawX, { stiffness: 55, damping: 18 });
-
   return (
     <>
       <style>{`
-        .tl-item .tl-desc  { opacity: 0; transform: translateY(10px); transition: opacity 0.32s ease, transform 0.32s ease; }
-        .tl-item .tl-num   { transition: opacity 0.32s ease, transform 0.32s ease; }
-        .tl-item .tl-icon  { opacity: 0; transform: translateY(8px) scale(0.88); transition: opacity 0.28s ease, transform 0.28s ease; }
-        .tl-item .tl-dot   { transition: transform 0.28s ease, box-shadow 0.28s ease; }
-        .tl-item:hover .tl-desc { opacity: 1 !important; transform: translateY(0) !important; }
-        .tl-item:hover .tl-num  { opacity: 0.06 !important; transform: translateY(-6px) !important; }
-        .tl-item:hover .tl-icon { opacity: 1 !important; transform: translateY(0) scale(1) !important; }
-        .tl-item:hover .tl-dot  { transform: translateY(-50%) scale(1.6) !important; }
+        @keyframes stripeSlide {
+          from { background-position: 200% 0 }
+          to   { background-position: -200% 0 }
+        }
       `}</style>
 
-      {/* Tall section to drive scroll */}
-      <section
-        ref={sectionRef}
-        id="services"
-        style={{ position: 'relative', height: '320vh', background: 'transparent' }}
-      >
-        {/* Sticky panel */}
-        <div style={{
-          position: 'sticky', top: 0,
-          height: '100vh', overflow: 'hidden',
-          display: 'flex', flexDirection: 'column', justifyContent: 'center',
-          padding: '0 64px',
-        }}>
+      <section id="services" style={{ position: 'relative', padding: '64px 24px 72px', background: 'transparent' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
 
           {/* ── Header ── */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -18 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            style={{ marginBottom: '48px' }}
+            style={{ marginBottom: '40px' }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-              <div style={{ width: '26px', height: '1px', background: 'linear-gradient(90deg, transparent, #10b981)' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
+              <div style={{ width: '28px', height: '1px', background: 'linear-gradient(90deg, transparent, #5effd8)' }} />
               <span style={{
                 fontFamily: "'Space Mono', monospace",
-                fontSize: '0.58rem', letterSpacing: '0.14em', textTransform: 'uppercase',
-                color: '#10b981', padding: '3px 10px',
-                border: '1px solid rgba(16,185,129,0.28)',
-                background: 'rgba(16,185,129,0.05)',
+                fontSize: '0.7rem', letterSpacing: '0.14em', textTransform: 'uppercase',
+                color: '#5effd8', padding: '3px 10px',
+                border: '1px solid rgba(94,255,216,0.28)',
+                background: 'rgba(94,255,216,0.05)',
                 clipPath: 'polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%)',
               }}>
                 Servicios Tech Sales
               </span>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
-              <h2 style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                fontSize: 'clamp(2rem, 3.2vw, 2.8rem)',
-                fontWeight: 700, lineHeight: 1.05, letterSpacing: '-0.02em', margin: 0,
-              }}>
-                <span style={{
-                  background: 'linear-gradient(135deg, #e8f5f0 0%, #6ee7b7 50%, #10b981 100%)',
-                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-                }}>Lo que puedo hacer </span>
-                <span style={{
-                  fontStyle: 'italic',
-                  background: 'linear-gradient(135deg, #f0c96a, #d4a843)',
-                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-                }}>por tu negocio</span>
-              </h2>
-
-              <p style={{
-                fontFamily: "'Space Mono', monospace",
-                fontSize: '0.55rem', letterSpacing: '0.1em', textTransform: 'uppercase',
-                color: 'rgba(232,245,240,0.28)',
-                display: 'flex', alignItems: 'center', gap: '8px', margin: 0,
-              }}>
-                Desplaza para explorar <span>→</span>
-              </p>
-            </div>
+            <h2 style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: 'clamp(2rem, 3.5vw, 2.8rem)',
+              fontWeight: 700, lineHeight: 1.05, letterSpacing: '-0.02em', margin: 0,
+            }}>
+              <span style={{
+                background: 'linear-gradient(135deg, #f0eaff 0%, #c4b5fd 50%, #b44fdf 100%)',
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              }}>Lo que puedo hacer </span>
+              <span style={{
+                fontStyle: 'italic',
+                background: 'linear-gradient(135deg, #e040a0, #b44fdf)',
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              }}>por tu negocio</span>
+            </h2>
           </motion.div>
 
-          {/* ── Horizontal track ── */}
-          <div style={{ position: 'relative' }}>
-
-            {/* Spine line */}
-            <div style={{
-              position: 'absolute', top: '50%', left: '-64px',
-              width: 'calc(100vw + 64px)',
-              height: '1px',
-              background: 'linear-gradient(90deg, transparent 2%, rgba(16,185,129,0.15) 15%, rgba(16,185,129,0.15) 85%, transparent 98%)',
-              transform: 'translateY(-50%)',
-              pointerEvents: 'none',
-            }} />
-
-            <motion.div
-              ref={trackRef}
-              style={{
-                x,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0',
-                willChange: 'transform',
-              }}
-            >
-              {ITEMS.map((item, i) => (
-                <div
-                  key={i}
-                  className="tl-item"
-                  onMouseEnter={() => setActive(i)}
-                  onMouseLeave={() => setActive(null)}
+          {/* ── Grid 3×2 ── */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+            {ITEMS.map((item, i) => (
+              <motion.div
+                key={i}
+                variants={fadeUp(i)}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, amount: 0.12 }}
+              >
+                <motion.div
+                  whileHover={{
+                    y: -4,
+                    borderColor: `rgba(${item.accentRgb},0.32)`,
+                    boxShadow: `0 8px 36px rgba(${item.accentRgb},0.1), 0 0 0 1px rgba(${item.accentRgb},0.18)`,
+                  }}
+                  transition={{ duration: 0.22 }}
                   style={{
-                    width: '290px',
-                    flexShrink: 0,
-                    marginRight: i < ITEMS.length - 1 ? '60px' : '140px',
+                    borderRadius: '14px',
+                    border: `1px solid rgba(${item.accentRgb},0.12)`,
+                    background: 'rgba(255,255,255,0.025)',
+                    backdropFilter: 'blur(16px)',
+                    padding: '28px 24px',
                     position: 'relative',
-                    padding: '32px 0 32px 28px',
-                    cursor: 'default',
+                    overflow: 'hidden',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '14px',
+                    height: '100%',
                   }}
                 >
-                  {/* Dot on spine */}
-                  <div
-                    className="tl-dot"
-                    style={{
-                      position: 'absolute', left: '-5px', top: '50%',
-                      transform: 'translateY(-50%)',
-                      width: '10px', height: '10px', borderRadius: '50%',
-                      background: item.accent,
-                      boxShadow: `0 0 0 3px rgba(${item.accentRgb},0.15)`,
-                      zIndex: 2,
-                    }}
-                  />
-
-                  {/* Vertical left bar */}
+                  {/* Animated top stripe */}
                   <div style={{
-                    position: 'absolute', left: 0, top: '15%', bottom: '15%', width: '1.5px',
-                    background: `linear-gradient(to bottom, transparent, ${item.accent} 40%, rgba(${item.accentRgb},0.3) 60%, transparent)`,
-                    opacity: active === i ? 0.8 : 0.25,
-                    transition: 'opacity 0.3s',
+                    position: 'absolute', top: 0, left: 0, right: 0, height: '1.5px',
+                    background: `linear-gradient(90deg, transparent, ${item.accent} 40%, rgba(${item.accentRgb},0.2) 60%, transparent)`,
+                    backgroundSize: '200% 100%',
+                    animation: 'stripeSlide 5s linear infinite',
                   }} />
 
-                  {/* Connector to next */}
-                  {i < ITEMS.length - 1 && (
-                    <div style={{
-                      position: 'absolute', right: '-60px', top: '50%',
-                      width: '60px', height: '1px',
-                      background: `linear-gradient(90deg, rgba(${item.accentRgb},0.25), rgba(${ITEMS[i+1].accentRgb},0.25))`,
-                      transform: 'translateY(-50%)',
-                    }} />
-                  )}
+                  {/* Left micro bar */}
+                  <div style={{
+                    position: 'absolute', left: 0, top: '18%', bottom: '18%', width: '2px',
+                    background: `linear-gradient(to bottom, transparent, ${item.accent} 45%, rgba(${item.accentRgb},0.4) 55%, transparent)`,
+                    opacity: 0.45,
+                  }} />
 
-                  {/* Big ghost number */}
-                  <div
-                    className="tl-num"
-                    style={{
-                      fontFamily: "'Cormorant Garamond', serif",
-                      fontSize: '6rem', fontWeight: 700, lineHeight: 1,
-                      color: item.accent,
-                      opacity: 0.1,
-                      position: 'absolute', top: '-8px', left: '22px',
-                      pointerEvents: 'none', userSelect: 'none',
-                      letterSpacing: '-0.04em',
-                    }}
-                  >
+                  {/* Ghost number */}
+                  <div style={{
+                    position: 'absolute', top: '8px', right: '16px',
+                    fontFamily: "'Cormorant Garamond', serif",
+                    fontSize: '4.5rem', fontWeight: 700, lineHeight: 1,
+                    color: item.accent, opacity: 0.06,
+                    pointerEvents: 'none', userSelect: 'none',
+                    letterSpacing: '-0.04em',
+                  }}>
                     {item.num}
                   </div>
 
-                  {/* Icon */}
-                  <div
-                    className="tl-icon"
-                    style={{
-                      width: '34px', height: '34px', marginBottom: '12px',
+                  {/* Icon + Title */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative', zIndex: 1 }}>
+                    <div style={{
+                      width: '36px', height: '36px', flexShrink: 0,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      background: `rgba(${item.accentRgb},0.08)`,
+                      background: `rgba(${item.accentRgb},0.07)`,
                       border: `1px solid rgba(${item.accentRgb},0.22)`,
                       clipPath: 'polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%)',
-                      position: 'relative', zIndex: 1,
-                    }}
-                  >
-                    <item.Icon size={14} style={{ color: item.accent }} />
+                    }}>
+                      <item.Icon size={16} style={{ color: item.accent }} />
+                    </div>
+                    <h3 style={{
+                      fontFamily: "'Cormorant Garamond', serif",
+                      fontSize: 'clamp(1.05rem, 1.4vw, 1.25rem)',
+                      fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.01em',
+                      color: '#e8f5f0', margin: 0,
+                    }}>
+                      {item.name}
+                    </h3>
                   </div>
 
-                  {/* Title */}
-                  <h3 style={{
-                    fontFamily: "'Cormorant Garamond', serif",
-                    fontSize: '1.25rem', fontWeight: 700, lineHeight: 1.1,
-                    letterSpacing: '-0.01em',
-                    color: active === i ? '#e8f5f0' : 'rgba(232,245,240,0.65)',
-                    margin: '0 0 10px 0',
+                  {/* Description */}
+                  <p style={{
+                    fontFamily: "'Outfit', sans-serif",
+                    fontSize: 'clamp(0.82rem, 1vw, 0.9rem)',
+                    lineHeight: 1.72,
+                    color: 'rgba(232,245,240,0.68)',
+                    fontWeight: 300, margin: 0, flex: 1,
                     position: 'relative', zIndex: 1,
-                    transition: 'color 0.28s',
                   }}>
-                    {item.name}
-                  </h3>
-
-                  {/* Description — reveals on hover */}
-                  <p
-                    className="tl-desc"
-                    style={{
-                      fontFamily: "'Outfit', sans-serif",
-                      fontSize: '0.82rem', lineHeight: 1.72,
-                      color: 'rgba(232,245,240,0.6)',
-                      fontWeight: 300, margin: '0 0 14px 0',
-                      position: 'relative', zIndex: 1,
-                    }}
-                  >
                     {item.desc}
                   </p>
 
                   {/* Tag */}
-                  <span
-                    style={{
-                      fontFamily: "'Space Mono', monospace",
-                      fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase',
-                      color: item.accent,
-                      padding: '3px 9px',
-                      border: `1px solid rgba(${item.accentRgb},0.22)`,
-                      background: `rgba(${item.accentRgb},0.06)`,
-                      clipPath: 'polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%)',
-                      display: 'inline-block',
-                      opacity: active === i ? 1 : 0.45,
-                      transition: 'opacity 0.28s',
-                      position: 'relative', zIndex: 1,
-                    }}
-                  >
+                  <span style={{
+                    fontFamily: "'Space Mono', monospace",
+                    fontSize: '0.62rem', letterSpacing: '0.1em', textTransform: 'uppercase',
+                    color: item.accent,
+                    padding: '3px 9px',
+                    border: `1px solid rgba(${item.accentRgb},0.22)`,
+                    background: `rgba(${item.accentRgb},0.06)`,
+                    clipPath: 'polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%)',
+                    display: 'inline-block',
+                    position: 'relative', zIndex: 1,
+                  }}>
                     {item.tag}
                   </span>
-                </div>
-              ))}
-            </motion.div>
-          </div>
-
-          {/* ── Progress bar ── */}
-          <div style={{
-            position: 'absolute', bottom: '36px', left: '64px', right: '64px',
-            height: '1px', background: 'rgba(255,255,255,0.06)',
-          }}>
-            <motion.div style={{
-              height: '100%',
-              background: 'linear-gradient(90deg, #10b981, #f472b6, #c084fc)',
-              scaleX: scrollYProgress,
-              transformOrigin: 'left',
-            }} />
-            <motion.div style={{
-              position: 'absolute', top: '-3px',
-              width: '7px', height: '7px', borderRadius: '50%',
-              background: '#10b981',
-              boxShadow: '0 0 8px #10b981',
-              left: useTransform(scrollYProgress, [0, 1], ['0%', '100%']),
-              x: '-50%',
-            }} />
+                </motion.div>
+              </motion.div>
+            ))}
           </div>
 
         </div>
