@@ -169,7 +169,7 @@ export function RightSidebar() {
           </nav>
 
           {/* CTA */}
-          <Link href="/contacto" className="nav-btn-cyber hidden md:inline-block">
+          <Link href="/agenda" className="nav-btn-cyber hidden md:inline-block">
             Agendar →
           </Link>
 
@@ -221,7 +221,7 @@ export function RightSidebar() {
               ))}
 
               <div className="pt-6 mt-2" style={{ borderTop: '1px solid rgba(180,79,223,.13)' }}>
-                <Link href="/contacto" className="nav-btn-cyber block text-center"
+                <Link href="/agenda" className="nav-btn-cyber block text-center"
                   style={{ clipPath: 'none', borderRadius: 4 }}>
                   Agendar llamada →
                 </Link>

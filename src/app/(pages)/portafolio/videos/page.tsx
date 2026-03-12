@@ -63,7 +63,7 @@ export default function VideosPage() {
         }
       `}</style>
 
-      <div className="min-h-screen relative z-10 pt-32 pb-24 px-6 md:px-16 bg-[#030308]">
+      <div className="min-h-screen relative z-10 pt-32 pb-24 px-6 md:px-16">
         <div className="max-w-7xl mx-auto">
           
           {/* Header */}

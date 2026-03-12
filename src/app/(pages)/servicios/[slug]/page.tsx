@@ -58,7 +58,7 @@ export default async function ServicePage({ params }: Props) {
       }} />
 
       <main
-        style={{ minHeight: "100vh", paddingTop: "40px", paddingBottom: "96px", paddingLeft: "24px", paddingRight: "24px", background: C.bg, fontFamily: "'Cormorant Garamond', Georgia, serif", position: "relative", zIndex: 1 }}
+        style={{ minHeight: "100vh", paddingTop: "40px", paddingBottom: "96px", paddingLeft: "24px", paddingRight: "24px", fontFamily: "'Cormorant Garamond', Georgia, serif", position: "relative", zIndex: 1 }}
       >
         <div style={{ maxWidth: "920px", margin: "0 auto" }}>
 

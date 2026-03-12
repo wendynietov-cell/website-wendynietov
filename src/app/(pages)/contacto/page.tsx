@@ -1,185 +1,107 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { z } from "zod";
-import { Mail, MapPin, CheckCircle2, Loader2 } from "lucide-react";
-import { AGENDA_SLOTS } from "@/lib/constants";
+import ContactForm from "@/components/features/ContactForm";
 
-const schema = z.object({
-  name: z.string().min(2, "Nombre muy corto"),
-  email: z.string().email("Email inválido"),
-  message: z.string().min(10, "Mensaje muy corto"),
+/* ─── PALETA OFICIAL ─────────────────────────────────────── */
+const C = {
+  purple: "#b44fdf",  pA: "rgba(180,79,223,",
+  pink:   "#e040a0",  pkA: "rgba(224,64,160,",
+  teal:   "#5effd8",  tA: "rgba(94,255,216,",
+  indigo: "#a5b4fc",  iA: "rgba(165,180,252,",
+  bg:     "#06060f",
+};
+
+
+/* ─── HELPERS ────────────────────────────────────────────── */
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.6, delay, ease: [0.23, 1, 0.32, 1] },
 });
 
-type FormData = { name: string; email: string; message: string };
-type FormErrors = Partial<Record<keyof FormData, string>>;
 
+/* ─── PAGE ───────────────────────────────────────────────── */
 export default function ContactoPage() {
-  const [submitted, setSubmitted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [form, setForm] = useState<FormData>({ name: "", email: "", message: "" });
-  const [errors, setErrors] = useState<FormErrors>({});
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const result = schema.safeParse(form);
-    if (!result.success) {
-      const fieldErrors: FormErrors = {};
-      result.error.errors.forEach((err) => {
-        const field = err.path[0] as keyof FormData;
-        fieldErrors[field] = err.message;
-      });
-      setErrors(fieldErrors);
-      return;
-    }
-    setErrors({});
-    setIsSubmitting(true);
-    const res = await fetch("/api/contacts", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    setIsSubmitting(false);
-    if (res.ok) setSubmitted(true);
-  };
+
 
   return (
-    <main className="min-h-screen pt-24 md:pt-16 pb-24 px-6 md:px-16 md:mr-20">
-      <div className="max-w-5xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-16"
-        >
-          <p className="text-primary font-mono text-sm uppercase tracking-widest mb-4">Contacto</p>
-          <h1 className="text-4xl md:text-6xl font-black mb-6">
-            Hablemos de tu <span className="text-gradient">proyecto</span>
-          </h1>
-          <p className="text-white/60 text-xl max-w-2xl">
-            Primera consulta sin costo. Analizamos tu caso y te decimos si podemos ayudarte.
-          </p>
-        </motion.div>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+        @keyframes shimmer    { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+        @keyframes blink      { 0%,100%{opacity:1} 50%{opacity:.15} }
+        @keyframes stripeAnim { 0%,100%{opacity:.45} 50%{opacity:.14} }
+        @keyframes trackSlide { 0%{left:-6px;opacity:0} 20%{opacity:1} 100%{left:40px;opacity:0} }
+        @keyframes scanDown   { from{top:0} to{top:100vh} }
+        textarea:focus { outline: none; }
+        
+        ::-webkit-scrollbar {
+          width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+          background: rgba(180,79,223,0.2);
+          border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: rgba(180,79,223,0.4);
+        }
+      `}</style>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Form */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            {submitted ? (
-              <div className="glass-card rounded-2xl p-12 flex flex-col items-center text-center">
-                <CheckCircle2 size={64} className="text-primary mb-6" />
-                <h2 className="text-2xl font-bold mb-3">¡Mensaje recibido!</h2>
-                <p className="text-white/60">Te contactaré en menos de 24 horas.</p>
-              </div>
-            ) : (
-              <form onSubmit={onSubmit} className="glass-card rounded-2xl p-8 space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-white/70 mb-2">Nombre</label>
-                  <input
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    placeholder="Tu nombre"
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-primary/50 transition-colors"
-                  />
-                  {errors.name && <p className="text-accent text-xs mt-1">{errors.name}</p>}
-                </div>
+      <div className="fixed top-0 left-0 right-0 h-0.5 z-0 pointer-events-none opacity-[.07]"
+        style={{ background: "linear-gradient(90deg,transparent,#b44fdf,#e040a0,transparent)", animation: "scanDown 7s linear infinite" }} />
 
-                <div>
-                  <label className="block text-sm font-medium text-white/70 mb-2">Email</label>
-                  <input
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    type="email"
-                    placeholder="tu@email.com"
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-primary/50 transition-colors"
-                  />
-                  {errors.email && <p className="text-accent text-xs mt-1">{errors.email}</p>}
-                </div>
+      <main className="relative min-h-screen pt-8 pb-24 px-6 md:px-16 md:mr-20 z-10">
+        <div className="max-w-5xl mx-auto">
 
-                <div>
-                  <label className="block text-sm font-medium text-white/70 mb-2">Mensaje</label>
-                  <textarea
-                    value={form.message}
-                    onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    rows={5}
-                    placeholder="Cuéntame sobre tu proyecto..."
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-primary/50 transition-colors resize-none"
-                  />
-                  {errors.message && <p className="text-accent text-xs mt-1">{errors.message}</p>}
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-primary text-background font-bold py-4 rounded-xl hover:shadow-[0_0_20px_rgba(21,245,186,0.4)] transition-all disabled:opacity-60 flex items-center justify-center gap-2"
-                >
-                  {isSubmitting ? (
-                    <><Loader2 size={18} className="animate-spin" /> Enviando...</>
-                  ) : (
-                    "Enviar mensaje"
-                  )}
-                </button>
-              </form>
-            )}
+          {/* top bar */}
+          <motion.div {...fadeUp(0)} className="flex items-center gap-3 mb-8">
+            <span className="font-mono text-[10px] tracking-[.13em] uppercase text-white/25">Wendy Nieto</span>
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg,rgba(180,79,223,.35),transparent)" }} />
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: C.purple, opacity: .65, animation: "blink 1.8s infinite" }} />
+            <span className="font-mono text-[10px] tracking-[.13em] uppercase text-white/25">Contacto</span>
           </motion.div>
 
-          {/* Info + Agenda */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
-            className="space-y-8"
-          >
-            <div className="glass-card rounded-2xl p-6 space-y-4">
-              <a
-                href="mailto:hello@arquitecto.com"
-                className="flex items-center gap-4 text-white/70 hover:text-primary transition-colors"
-              >
-                <div className="p-3 bg-primary/10 rounded-xl">
-                  <Mail size={20} className="text-primary" />
-                </div>
-                <div>
-                  <p className="text-xs text-white/40 uppercase tracking-wide mb-0.5">Email</p>
-                  <span className="font-medium">hello@arquitecto.com</span>
-                </div>
-              </a>
-              <div className="flex items-center gap-4 text-white/70">
-                <div className="p-3 bg-primary/10 rounded-xl">
-                  <MapPin size={20} className="text-primary" />
-                </div>
-                <div>
-                  <p className="text-xs text-white/40 uppercase tracking-wide mb-0.5">Ubicación</p>
-                  <span className="font-medium">LATAM · Remoto</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="glass-card rounded-2xl p-6">
-              <h3 className="font-bold mb-4">Slots disponibles esta semana</h3>
-              <div className="space-y-2">
-                {AGENDA_SLOTS.map((slot, i) => (
-                  <div
-                    key={i}
-                    className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm ${
-                      slot.available
-                        ? "bg-primary/5 border border-primary/20 text-white"
-                        : "bg-white/3 border border-white/5 text-white/30"
-                    }`}
-                  >
-                    <span>{slot.time}</span>
-                    <span className={`text-xs font-medium ${slot.available ? "text-primary" : "text-white/30"}`}>
-                      {slot.available ? "Disponible" : "Ocupado"}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+          {/* header */}
+          <motion.div {...fadeUp(0.05)} className="mb-8">
+            <p className="font-mono text-[10px] tracking-[.15em] uppercase mb-3"
+              style={{ color: "rgba(180,79,223,.6)" }}>
+              Networking & Advisory
+            </p>
+            <h1 className="leading-[.9] mb-5"
+              style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(2.6rem,5vw,4.5rem)", fontWeight: 700, letterSpacing: "-.025em" }}>
+              <span className="text-white">Hablemos de </span>
+              <span className="font-light italic"
+                style={{ background: `linear-gradient(135deg,${C.indigo},${C.purple},${C.pink})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundSize: "200%", animation: "shimmer 6s ease infinite" }}>
+                Estrategia
+              </span>
+            </h1>
+            <p className="text-white/38 text-base max-w-xl leading-[1.85] font-light">
+              Desde la arquitectura de software hasta la expansión en mercados Greenfield.
+              Elige el canal que prefieras para conectar.
+            </p>
           </motion.div>
+
+          {/* ── FORMULARIO ── */}
+          <div className="max-w-2xl mx-auto">
+            <ContactForm fadeUp={fadeUp} />
+          </div>
+
+          {/* scroll indicator */}
+          <div className="flex items-center gap-3 mt-12 font-mono text-[9px] tracking-widest uppercase text-white/18">
+            <div className="relative w-10 h-px overflow-hidden" style={{ background: "linear-gradient(90deg,#b44fdf,transparent)" }}>
+              <div className="absolute -top-[2px] -left-1.5 w-1.5 h-1.5 rounded-full bg-purple-400"
+                style={{ animation: "trackSlide 2s ease-in-out infinite" }} />
+            </div>
+            <span>End of contact</span>
+          </div>
+
         </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }

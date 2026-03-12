@@ -16,14 +16,14 @@ const C = {
 
 /* ─── DATA ───────────────────────────────────────────────── */
 const DESIGNS = [
-  { title: "Startup Branding Kit",  client: "BuscArt",      type: "Brand Identity", img: "/design1.jpg", accent: C.purple, accentA: C.pA  },
-  { title: "Social Media Campaign", client: "Tech Event",   type: "Marketing",      img: "/design2.jpg", accent: C.teal,   accentA: C.tA  },
-  { title: "Pitch Deck UI/UX",      client: "Fintech App",  type: "Presentation",   img: "/design3.jpg", accent: C.pink,   accentA: C.pkA },
-  { title: "Abstract Art Series",   client: "Personal",     type: "Digital Art",    img: "/design4.jpg", accent: C.indigo, accentA: C.iA  },
-  { title: "E-commerce Rebrand",    client: "Retail Co.",   type: "Brand Identity", img: "/design5.jpg", accent: C.pink,   accentA: C.pkA },
-  { title: "Event Visual Identity", client: "MedellínTech", type: "Marketing",      img: "/design6.jpg", accent: C.teal,   accentA: C.tA  },
-  { title: "App Onboarding Flow",   client: "SaaS Client",  type: "UI Design",      img: "/design7.jpg", accent: C.indigo, accentA: C.iA  },
-  { title: "Newsletter Template",   client: "BuscArt",      type: "Marketing",      img: "/design8.jpg", accent: C.purple, accentA: C.pA  },
+  { title: "Startup Branding Kit",  client: "BuscArt",      type: "Brand Identity", accent: C.purple, accentA: C.pA  },
+  { title: "Social Media Campaign", client: "Tech Event",   type: "Marketing",      accent: C.teal,   accentA: C.tA  },
+  { title: "Pitch Deck UI/UX",      client: "Fintech App",  type: "Presentation",   accent: C.pink,   accentA: C.pkA },
+  { title: "Abstract Art Series",   client: "Personal",     type: "Digital Art",    accent: C.indigo, accentA: C.iA  },
+  { title: "E-commerce Rebrand",    client: "Retail Co.",   type: "Brand Identity", accent: C.pink,   accentA: C.pkA },
+  { title: "Event Visual Identity", client: "MedellínTech", type: "Marketing",      accent: C.teal,   accentA: C.tA  },
+  { title: "App Onboarding Flow",   client: "SaaS Client",  type: "UI Design",      accent: C.indigo, accentA: C.iA  },
+  { title: "Newsletter Template",   client: "BuscArt",      type: "Marketing",      accent: C.purple, accentA: C.pA  },
 ];
 
 const ALL_TYPES = ["Todos", ...Array.from(new Set(DESIGNS.map(d => d.type)))];
@@ -41,13 +41,38 @@ function DesignCard({ item, index }: { item: typeof DESIGNS[0]; index: number })
       className="group"
       style={{ borderRadius: 16, overflow: "hidden", background: "rgba(255,255,255,.03)", border: "1px solid rgba(255,255,255,.07)" }}
     >
-      {/* Imagen — protagonista, siempre visible */}
+      {/* Espejo visual — efecto de gradiente animado */}
       <div className="relative overflow-hidden" style={{ aspectRatio: "4/3" }}>
-        <Image
-          src={item.img} alt={item.title} fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-          style={{ opacity: 0.92 }}
+        <div 
+          className="absolute inset-0 transition-all duration-700 group-hover:scale-105"
+          style={{
+            background: `
+              radial-gradient(circle at 20% 30%, ${item.accentA}.15) 0%, transparent 50%),
+              radial-gradient(circle at 80% 70%, ${item.accentA}.08) 0%, transparent 50%),
+              linear-gradient(135deg, ${item.accentA}.05 0%, transparent 70%)
+            `,
+            animation: "shimmer 8s ease-in-out infinite"
+          }}
         />
+        {/* Patrón geométrico */}
+        <div className="absolute inset-0 opacity-20">
+          <div 
+            className="absolute top-4 left-4 w-16 h-16 border-2 rounded-full"
+            style={{ borderColor: `${item.accent}30`, transform: "rotate(15deg)" }}
+          />
+          <div 
+            className="absolute bottom-4 right-4 w-12 h-12 border-2"
+            style={{ borderColor: `${item.accent}25`, transform: "rotate(-10deg)" }}
+          />
+          <div 
+            className="absolute top-1/2 left-1/2 w-20 h-20 border-2 rounded-lg"
+            style={{ 
+              borderColor: `${item.accent}20`, 
+              transform: "translate(-50%, -50%) rotate(25deg)",
+              animation: "float 6s ease-in-out infinite"
+            }}
+          />
+        </div>
         {/* Overlay sutil en hover */}
         <div
           className="absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100"
@@ -113,12 +138,14 @@ export default function DisenoPage() {
         @keyframes trackSlide { 0%{left:-6px;opacity:0} 20%{opacity:1} 100%{left:40px;opacity:0} }
         @keyframes scanDown { from{top:0} to{top:100vh} }
         @keyframes stripeAnim { 0%,100%{opacity:.45} 50%{opacity:.15} }
+        @keyframes shimmer { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+        @keyframes float { 0%,100%{transform:translate(-50%, -50%) rotate(25deg) translateY(0px)} 50%{transform:translate(-50%, -50%) rotate(25deg) translateY(-10px)} }
       `}</style>
 
       <div className="fixed top-0 left-0 right-0 h-0.5 z-0 pointer-events-none opacity-[.07]"
         style={{ background: "linear-gradient(90deg,transparent,#b44fdf,#e040a0,transparent)", animation: "scanDown 7s linear infinite" }} />
 
-      <main className="relative min-h-screen pt-8 pb-24 px-6 md:px-16 md:mr-20 z-10" style={{ background: C.bg }}>
+      <main className="relative min-h-screen pt-8 pb-24 px-6 md:px-16 md:mr-20 z-10">
         <div className="max-w-5xl mx-auto">
 
           {/* top bar */}

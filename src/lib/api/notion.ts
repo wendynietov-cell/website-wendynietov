@@ -43,10 +43,10 @@ class NotionService {
     if (!this.isClientReady()) return []
 
     try {
-      const response = await this.client.search({
+      const response = await this.client!.search({
         filter: {
           property: 'object',
-          value: 'database',
+          value: 'page',
         },
       })
 
@@ -66,16 +66,16 @@ class NotionService {
     if (!this.isClientReady()) return []
 
     try {
-      const response = await this.client.databases.query({
+      const response = await (this.client! as any).databases.query({
         database_id: databaseId,
       })
 
       // Obtener información de la base de datos
-      const database = await this.client.databases.retrieve({
+      const database = await (this.client! as any).databases.retrieve({
         database_id: databaseId,
       })
 
-      const databaseName = database.title?.[0]?.plain_text || 'Base de datos'
+      const databaseName = (database as any).title?.[0]?.plain_text || 'Base de datos'
 
       return response.results.map((page: any) => {
         const properties = page.properties
@@ -196,7 +196,7 @@ class NotionService {
         }
       }
 
-      const response = await this.client.pages.create({
+      const response = await (this.client! as any).pages.create({
         parent: {
           database_id: databaseId,
         },
@@ -204,11 +204,11 @@ class NotionService {
       })
 
       // Obtener información de la base de datos
-      const database = await this.client.databases.retrieve({
+      const database = await (this.client! as any).databases.retrieve({
         database_id: databaseId,
       })
 
-      const databaseName = database.title?.[0]?.plain_text || 'Base de datos'
+      const databaseName = (database as any).title?.[0]?.plain_text || 'Base de datos'
 
       return {
         id: response.id,
@@ -285,7 +285,7 @@ class NotionService {
         }
       }
 
-      await this.client.pages.update({
+      await (this.client! as any).pages.update({
         page_id: pageId,
         properties,
       })

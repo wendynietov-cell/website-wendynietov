@@ -137,10 +137,10 @@ function S0Left() {
 
 function S0Right() {
   return (
-    <div style={{ position: "relative", height: "100%", overflow: "hidden" }}>
+    <div style={{ position: "relative", height: "100%", minHeight: "300px", overflow: "hidden" }}>
       <StripeTop color={C.pink} />
       <AccentBar color={C.pink} side="right" />
-      <Image src="/sobremisection.png" alt="Wendy Nieto" fill
+      <Image src="/sobremisection.png" alt="Wendy Nieto" fill sizes="100vw"
         style={{ objectFit: "cover", objectPosition: "top", mixBlendMode: "luminosity", filter: "contrast(1.08) brightness(.9)" }} />
       <div style={{ position: "absolute", inset: 0, background: `linear-gradient(to right,${C.bg}aa 0%,transparent 30%), linear-gradient(to top,${C.bg}cc 0%,transparent 45%)` }} />
       <div style={{ position: "absolute", inset: 0, background: `linear-gradient(135deg,rgba(109,40,217,.18),transparent 50%,rgba(224,64,160,.1))`, mixBlendMode: "color" }} />
@@ -410,6 +410,7 @@ export default function SobreMiLibro() {
   const [flipping, setFlipping]     = useState(false);
   const [flipDir, setFlipDir]       = useState<"next" | "prev">("next");
   const [nextSpread, setNextSpread] = useState(0);
+  const [isMobile, setIsMobile]     = useState(false);
   const touchX = useRef<number | null>(null);
   const total  = SPREADS.length;
 
@@ -432,6 +433,16 @@ export default function SobreMiLibro() {
     window.addEventListener("keydown", h);
     return () => window.removeEventListener("keydown", h);
   }, [spread, flipTo]);
+
+  // Detectar dispositivo móvil
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const Cur  = SPREADS[spread];
   const Next = SPREADS[nextSpread];
@@ -490,12 +501,42 @@ export default function SobreMiLibro() {
           <span style={{ fontFamily: "monospace", fontSize: 10, color: "rgba(255,255,255,.28)", letterSpacing: "0.12em", textTransform: "uppercase" }}>Wendy Nieto · 2026</span>
         </div>
 
+        {/* Mensaje para móvil */}
+        {isMobile && (
+          <div style={{
+            width: "100%", maxWidth: 920, marginBottom: 16,
+            padding: "12px 16px",
+            background: "rgba(180,79,223,.08)",
+            border: "1px solid rgba(180,79,223,.2)",
+            borderRadius: "10px",
+            display: "flex", alignItems: "center", gap: 12,
+          }}>
+            <div style={{
+              width: 24, height: 24,
+              background: `linear-gradient(135deg,${C.purple},${C.pink})`,
+              borderRadius: "6px",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "12px", color: "white",
+              transform: "rotate(90deg)",
+            }}>↻</div>
+            <div style={{ flex: 1 }}>
+              <p style={{
+                fontFamily: "monospace", fontSize: "9px", lineHeight: 1.4,
+                color: "rgba(255,255,255,.6)", margin: 0,
+                letterSpacing: "0.08em", textTransform: "uppercase"
+              }}>
+                Para mejor experiencia, gira tu celular horizontalmente
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* LIBRO */}
         <div style={{
           width: "100%", maxWidth: 920,
-          height: "min(70vh, 580px)",
+          height: isMobile ? "min(85vh, 700px)" : "min(70vh, 580px)",
           position: "relative",
-          perspective: "2200px",
+          perspective: isMobile ? "none" : "2200px",
           perspectiveOrigin: "50% 50%",
         }}>
           {/* Sombra */}
@@ -505,125 +546,174 @@ export default function SobreMiLibro() {
             filter: "blur(14px)", pointerEvents: "none",
           }} />
 
-          {/* PÁGINA IZQUIERDA */}
-          <div style={{
-            position: "absolute", top: 0, left: 0, width: "50%", height: "100%",
-            background: C.pageL,
-            border: "1px solid rgba(180,79,223,.22)",
-            borderRight: "none",
-            borderRadius: "14px 0 0 14px",
-            boxShadow: "inset 0 1px 0 rgba(255,255,255,.04), -6px 0 28px rgba(0,0,0,.5)",
-            overflow: "hidden",
-          }}>
-            {flipping && flipDir === "prev" ? <Next.Left /> : <Cur.Left />}
-          </div>
-
-          {/* ENCUADERNACIÓN */}
-          <div style={{
-            position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)",
-            width: 16, height: "100%", zIndex: 20, pointerEvents: "none",
-            background: "linear-gradient(90deg,rgba(0,0,0,.7) 0%,rgba(180,79,223,.12) 35%,rgba(224,64,160,.08) 50%,rgba(180,79,223,.12) 65%,rgba(0,0,0,.7) 100%)",
-            boxShadow: "0 0 16px rgba(180,79,223,.15)",
-          }}>
-            <div style={{ position: "absolute", top: "8%", bottom: "8%", left: "50%", transform: "translateX(-50%)", width: 1, background: "linear-gradient(to bottom,transparent,rgba(180,79,223,.5) 20%,rgba(224,64,160,.5) 80%,transparent)" }} />
-          </div>
-
-          {/* PÁGINA DERECHA */}
-          <div style={{
-            position: "absolute", top: 0, right: 0, width: "50%", height: "100%",
-            background: C.pageR,
-            border: "1px solid rgba(224,64,160,.18)",
-            borderLeft: "none",
-            borderRadius: "0 14px 14px 0",
-            boxShadow: "inset 0 1px 0 rgba(255,255,255,.03), 6px 0 28px rgba(0,0,0,.5)",
-            overflow: "hidden",
-          }}>
-            {flipping && flipDir === "next" ? <Next.Right /> : <Cur.Right />}
-          </div>
-
-          {/* HOJA QUE SE DOBLA */}
-          {flipping && (
-            <div
-              className={flipDir === "next" ? "flip-next" : "flip-prev"}
-              style={{
-                position: "absolute", top: 0,
-                left: flipDir === "next" ? "50%" : "0%",
-                width: "50%", height: "100%", zIndex: 10,
-                transformStyle: "preserve-3d",
-                transformOrigin: flipDir === "next" ? "left center" : "right center",
-              }}
-            >
-              <div style={{
-                position: "absolute", inset: 0, backfaceVisibility: "hidden",
-                background: flipDir === "next" ? C.pageR : C.pageL,
-                border: flipDir === "next" ? "1px solid rgba(224,64,160,.2)" : "1px solid rgba(180,79,223,.22)",
-                borderRadius: flipDir === "next" ? "0 14px 14px 0" : "14px 0 0 14px",
-                overflow: "hidden",
-                boxShadow: flipDir === "next"
-                  ? "inset -4px 0 18px rgba(0,0,0,.4), 4px 0 18px rgba(0,0,0,.5)"
-                  : "inset 4px 0 18px rgba(0,0,0,.4), -4px 0 18px rgba(0,0,0,.5)",
-              }}>
-                {flipDir === "next" ? <Cur.Right /> : <Cur.Left />}
-              </div>
-
-              <div style={{
-                position: "absolute", inset: 0, backfaceVisibility: "hidden",
-                transform: "rotateY(180deg)",
-                background: flipDir === "next" ? C.pageL : C.pageR,
-                border: flipDir === "next" ? "1px solid rgba(180,79,223,.22)" : "1px solid rgba(224,64,160,.18)",
-                borderRadius: flipDir === "next" ? "14px 0 0 14px" : "0 14px 14px 0",
-                overflow: "hidden",
-              }}>
-                {flipDir === "next" ? <Next.Left /> : <Next.Right />}
+          {isMobile ? (
+            // === VERSIÓN MÓVIL: UNA SOLA PÁGINA ===
+            <div style={{
+              position: "relative", width: "100%", height: "100%",
+              background: C.pageL,
+              border: "1px solid rgba(180,79,223,.22)",
+              borderRadius: "14px",
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,.04), 0 0 28px rgba(0,0,0,.5)",
+              overflow: "hidden",
+            }}>
+              <div style={{ padding: "24px 20px", height: "100%", overflowY: "auto" }}>
+                <Cur.Left />
+                <div style={{ marginTop: 20, borderTop: `1px solid ${C.purple}22`, paddingTop: 20 }}>
+                  <Cur.Right />
+                </div>
               </div>
             </div>
+          ) : (
+            // === VERSIÓN DESKTOP: LIBRO DOBLE ===
+            <>
+              {/* PÁGINA IZQUIERDA */}
+              <div style={{
+                position: "absolute", top: 0, left: 0, width: "50%", height: "100%",
+                background: C.pageL,
+                border: "1px solid rgba(180,79,223,.22)",
+                borderRight: "none",
+                borderRadius: "14px 0 0 14px",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,.04), -6px 0 28px rgba(0,0,0,.5)",
+                overflow: "hidden",
+              }}>
+                {flipping && flipDir === "prev" ? <Next.Left /> : <Cur.Left />}
+              </div>
+
+              {/* ENCUADERNACIÓN */}
+              <div style={{
+                position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)",
+                width: 16, height: "100%", zIndex: 20, pointerEvents: "none",
+                background: "linear-gradient(90deg,rgba(0,0,0,.7) 0%,rgba(180,79,223,.12) 35%,rgba(224,64,160,.08) 50%,rgba(180,79,223,.12) 65%,rgba(0,0,0,.7) 100%)",
+                boxShadow: "0 0 16px rgba(180,79,223,.15)",
+              }}>
+                <div style={{ position: "absolute", top: "8%", bottom: "8%", left: "50%", transform: "translateX(-50%)", width: 1, background: "linear-gradient(to bottom,transparent,rgba(180,79,223,.5) 20%,rgba(224,64,160,.5) 80%,transparent)" }} />
+              </div>
+
+              {/* PÁGINA DERECHA */}
+              <div style={{
+                position: "absolute", top: 0, right: 0, width: "50%", height: "100%",
+                background: C.pageR,
+                border: "1px solid rgba(224,64,160,.18)",
+                borderLeft: "none",
+                borderRadius: "0 14px 14px 0",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,.03), 6px 0 28px rgba(0,0,0,.5)",
+                overflow: "hidden",
+              }}>
+                {flipping && flipDir === "next" ? <Next.Right /> : <Cur.Right />}
+              </div>
+
+              {/* HOJA QUE SE DOBLA */}
+              {flipping && (
+                <div
+                  className={flipDir === "next" ? "flip-next" : "flip-prev"}
+                  style={{
+                    position: "absolute", top: 0,
+                    left: flipDir === "next" ? "50%" : "0%",
+                    width: "50%", height: "100%", zIndex: 10,
+                    transformStyle: "preserve-3d",
+                    transformOrigin: flipDir === "next" ? "left center" : "right center",
+                  }}
+                >
+                  <div style={{
+                    position: "absolute", inset: 0, backfaceVisibility: "hidden",
+                    background: flipDir === "next" ? C.pageR : C.pageL,
+                    border: flipDir === "next" ? "1px solid rgba(224,64,160,.2)" : "1px solid rgba(180,79,223,.22)",
+                    borderRadius: flipDir === "next" ? "0 14px 14px 0" : "14px 0 0 14px",
+                    overflow: "hidden",
+                    boxShadow: flipDir === "next"
+                      ? "inset -4px 0 18px rgba(0,0,0,.4), 4px 0 18px rgba(0,0,0,.5)"
+                      : "inset 4px 0 18px rgba(0,0,0,.4), -4px 0 18px rgba(0,0,0,.5)",
+                  }}>
+                    {flipDir === "next" ? <Cur.Right /> : <Cur.Left />}
+                  </div>
+
+                  <div style={{
+                    position: "absolute", inset: 0, backfaceVisibility: "hidden",
+                    transform: "rotateY(180deg)",
+                    background: flipDir === "next" ? C.pageL : C.pageR,
+                    border: flipDir === "next" ? "1px solid rgba(180,79,223,.22)" : "1px solid rgba(224,64,160,.18)",
+                    borderRadius: flipDir === "next" ? "14px 0 0 14px" : "0 14px 14px 0",
+                    overflow: "hidden",
+                    boxShadow: flipDir === "next"
+                      ? "inset 4px 0 18px rgba(0,0,0,.4), -4px 0 18px rgba(0,0,0,.5)"
+                      : "inset -4px 0 18px rgba(0,0,0,.4), 4px 0 18px rgba(0,0,0,.5)",
+                  }}>
+                    {flipDir === "next" ? <Next.Left /> : <Next.Right />}
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
 
         {/* NAVEGACIÓN */}
-        <div style={{ width: "100%", maxWidth: 920, display: "flex", alignItems: "center", gap: 12, marginTop: 14 }}>
-          <button
-            onClick={() => flipTo(spread - 1)}
-            disabled={spread === 0 || flipping}
-            style={{
-              display: "inline-flex", alignItems: "center", gap: 6,
-              fontFamily: "monospace", fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase",
-              padding: "8px 16px", background: "transparent", cursor: spread === 0 ? "default" : "pointer",
-              border: `1px solid rgba(180,79,223,${spread === 0 ? ".15" : ".4"})`,
-              color: spread === 0 ? "rgba(255,255,255,.15)" : "rgba(180,79,223,.85)",
-              clipPath: "polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%)",
-              transition: "all .2s",
-            }}>
-            <ChevronLeft size={12} /> Anterior
-          </button>
+        <div style={{ 
+          width: "100%", maxWidth: 920, 
+          display: "flex", 
+          alignItems: "center", 
+          gap: isMobile ? 8 : 12, 
+          marginTop: isMobile ? 10 : 14,
+          flexDirection: isMobile ? "column" : "row"
+        }}>
+          <div style={{ 
+            display: "flex", 
+            gap: isMobile ? 6 : 12, 
+            width: isMobile ? "100%" : "auto",
+            justifyContent: isMobile ? "space-between" : "flex-start"
+          }}>
+            <button
+              onClick={() => flipTo(spread - 1)}
+              disabled={spread === 0 || flipping}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 6,
+                fontFamily: "monospace", fontSize: isMobile ? 9 : 10, letterSpacing: "0.1em", textTransform: "uppercase",
+                padding: isMobile ? "6px 12px" : "8px 16px", background: "transparent", cursor: spread === 0 ? "default" : "pointer",
+                border: `1px solid rgba(180,79,223,${spread === 0 ? ".15" : ".4"})`,
+                color: spread === 0 ? "rgba(255,255,255,.15)" : "rgba(180,79,223,.85)",
+                clipPath: "polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%)",
+                transition: "all .2s",
+              }}>
+              <ChevronLeft size={isMobile ? 10 : 12} /> {isMobile ? "" : "Anterior"}
+            </button>
 
-          <div style={{ flex: 1, display: "flex", gap: 6, justifyContent: "center" }}>
+            <button
+              onClick={() => flipTo(spread + 1)}
+              disabled={spread === total - 1 || flipping}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 6,
+                fontFamily: "monospace", fontSize: isMobile ? 9 : 10, letterSpacing: "0.1em", textTransform: "uppercase",
+                padding: isMobile ? "6px 12px" : "8px 16px", cursor: spread === total - 1 ? "default" : "pointer",
+                border: `1px solid rgba(180,79,223,${spread === total - 1 ? ".15" : ".55"})`,
+                background: spread === total - 1 ? "transparent" : "rgba(180,79,223,.12)",
+                color: spread === total - 1 ? "rgba(255,255,255,.15)" : C.purple,
+                clipPath: "polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%)",
+                transition: "all .2s",
+              }}>
+              {isMobile ? "" : "Siguiente"} <ChevronRight size={isMobile ? 10 : 12} />
+            </button>
+          </div>
+
+          <div style={{ 
+            flex: 1, 
+            display: "flex", 
+            gap: isMobile ? 4 : 6, 
+            justifyContent: "center",
+            marginTop: isMobile ? 8 : 0
+          }}>
             {SPREADS.map((_, i) => (
               <button key={i} onClick={() => flipTo(i)}
                 style={{
-                  width: i === spread ? 22 : 7, height: 7, borderRadius: 4, border: "none",
-                  cursor: "pointer", padding: 0,
+                  width: i === spread ? (isMobile ? 18 : 22) : (isMobile ? 5 : 7), 
+                  height: isMobile ? 5 : 7, 
+                  borderRadius: 4, 
+                  border: "none",
+                  cursor: "pointer", 
+                  padding: 0,
                   background: i === spread ? C.purple : `${C.purple}33`,
                   transition: "all .3s ease",
                 }} />
             ))}
           </div>
-
-          <button
-            onClick={() => flipTo(spread + 1)}
-            disabled={spread === total - 1 || flipping}
-            style={{
-              display: "inline-flex", alignItems: "center", gap: 6,
-              fontFamily: "monospace", fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase",
-              padding: "8px 16px", cursor: spread === total - 1 ? "default" : "pointer",
-              border: `1px solid rgba(180,79,223,${spread === total - 1 ? ".15" : ".55"})`,
-              background: spread === total - 1 ? "transparent" : "rgba(180,79,223,.12)",
-              color: spread === total - 1 ? "rgba(255,255,255,.15)" : C.purple,
-              clipPath: "polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%)",
-              transition: "all .2s",
-            }}>
-            Siguiente <ChevronRight size={12} />
-          </button>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10, fontFamily: "monospace", fontSize: 10, color: "rgba(255,255,255,.22)", letterSpacing: "0.1em", textTransform: "uppercase" }}>

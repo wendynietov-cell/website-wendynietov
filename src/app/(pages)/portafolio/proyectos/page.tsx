@@ -162,7 +162,7 @@ export default function ProyectosPage() {
       <div className="fixed top-0 left-0 right-0 h-0.5 z-0 pointer-events-none opacity-[.07]"
         style={{ background: "linear-gradient(90deg,transparent,#b44fdf,#e040a0,transparent)", animation: "scanDown 7s linear infinite" }} />
 
-      <main className="relative min-h-screen pt-12 pb-24 px-6 md:px-16 md:mr-20 z-10" style={{ background: C.bg }}>
+      <main className="relative min-h-screen pt-12 pb-24 px-6 md:px-16 md:mr-20 z-10">
         <div className="max-w-5xl mx-auto">
 
           {/* top bar */}
