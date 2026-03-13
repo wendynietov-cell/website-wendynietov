@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    /* ── Background ── */
+    /* ── Dark Mode (Default) ── */
     --navy-deep:   #050d1a;
     --navy-mid:    #071628;
     --navy-light:  #0d2040;
@@ -19,7 +19,7 @@
     --purple:      #b44fdf;
     --purple-soft: #d08ef8;
 
-    /* ── Tailwind CSS var tokens ── */
+    /* ── Tailwind CSS var tokens - Dark Mode ── */
     --background: 214 56% 6%;       /* #050d1a */
     --foreground: 220 60% 95%;      /* #e8f0ff */
 
@@ -41,13 +41,40 @@
     --font-mono: 'Space Mono', monospace;
     --font-serif: 'Cormorant Garamond', serif;
 
-    /* Glass */
+    /* Glass - Dark */
     --glass-bg:     rgba(13, 32, 64, 0.45);
     --glass-border: rgba(94, 255, 216, 0.15);
 
     /* Gradients */
     --gradient-main: linear-gradient(135deg, #e040a0 0%, #b44fdf 100%);
     --gradient-mint: linear-gradient(135deg, #5effd8 0%, #00c9a7 100%);
+  }
+
+  .light {
+    /* ── Light Mode Colors ── */
+    --background: 0 0% 98%;         /* #FAFAFA */
+    --foreground: 0 0% 10%;         /* #1A1A1A */
+
+    --primary: 217 91% 60%;          /* #3B82F6 */
+    --primary-foreground: 0 0% 98%;
+
+    --accent: 262 83% 58%;           /* #8B5CF6 */
+    --accent-foreground: 0 0% 98%;
+
+    --card: 0 0% 100%;               /* #FFFFFF */
+    --card-foreground: 0 0% 10%;
+
+    --border: 0 0% 86%;              /* #E5E5E5 */
+    --input:  0 0% 86%;
+    --ring:   217 91% 60%;
+
+    /* Glass - Light */
+    --glass-bg:     rgba(255, 255, 255, 0.8);
+    --glass-border: rgba(0, 0, 0, 0.08);
+
+    /* Light theme gradients */
+    --gradient-main: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+    --gradient-mint: linear-gradient(135deg, #10B981 0%, #059669 100%);
   }
 
   *, *::before, *::after {
@@ -59,12 +86,13 @@
   }
 
   body {
-    background-color: var(--navy-deep);
+    background-color: hsl(var(--background));
     color: hsl(var(--foreground));
     font-family: var(--font-sans);
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   h1, h2, h3, h4, h5, h6 {

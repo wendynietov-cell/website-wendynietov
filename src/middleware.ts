@@ -4,8 +4,12 @@ import { NextResponse, type NextRequest } from "next/server";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Only protect /admin routes (except /admin/login)
-  if (!pathname.startsWith("/admin") || pathname === "/admin/login") {
+  // Protect /admin routes (except /admin/login) and /dashboard
+  const isProtectedRoute = 
+    (pathname.startsWith("/admin") && pathname !== "/admin/login") ||
+    pathname === "/dashboard";
+
+  if (!isProtectedRoute) {
     return NextResponse.next();
   }
 
@@ -38,5 +42,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/dashboard"],
 };

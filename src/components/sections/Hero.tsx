@@ -201,6 +201,7 @@ export function Hero() {
                 src="/imageportada.png"
                 alt="Wendy Nieto"
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover object-top"
                 style={{ mixBlendMode: 'luminosity', filter: 'contrast(1.05) brightness(0.9)' }}
                 priority

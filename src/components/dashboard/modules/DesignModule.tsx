@@ -1,7 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Palette, Upload, Eye, Download, Grid, List, Search, Filter, Plus, Folder } from 'lucide-react'
+import { 
+  Palette, Upload, Eye, Download, List, Search, 
+  Plus, Folder, LayoutGrid, ChevronRight, RefreshCcw, MoreHorizontal 
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface Project {
   id: string
@@ -18,298 +22,116 @@ export default function DesignModule() {
   const [loading, setLoading] = useState(true)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [searchTerm, setSearchTerm] = useState('')
-  const [filterType, setFilterType] = useState<string>('all')
 
   useEffect(() => {
-    // Simulación de carga de proyectos desde almacenamiento
     const mockProjects: Project[] = [
-      {
-        id: '1',
-        title: 'Sitio Web - Restaurante El Sabor',
-        type: 'website',
-        thumbnail: '/api/placeholder/300/200',
-        lastModified: 'Hace 2 horas',
-        status: 'review',
-        client: 'Restaurante El Sabor'
-      },
-      {
-        id: '2',
-        title: 'Logo - Boutique Hotel',
-        type: 'logo',
-        thumbnail: '/api/placeholder/300/200',
-        lastModified: 'Ayer',
-        status: 'completed',
-        client: 'Boutique Hotel Central'
-      },
-      {
-        id: '3',
-        title: 'Banner Social Media - Campaña Verano',
-        type: 'social',
-        thumbnail: '/api/placeholder/300/200',
-        lastModified: 'Hace 3 días',
-        status: 'draft',
-        client: 'Marca de Ropa'
-      },
-      {
-        id: '4',
-        title: 'Website - E-commerce Tienda',
-        type: 'website',
-        thumbnail: '/api/placeholder/300/200',
-        lastModified: 'Hace 1 semana',
-        status: 'completed',
-        client: 'Tienda Online'
-      },
-      {
-        id: '5',
-        title: 'Banner Promocional - Happy Hour',
-        type: 'banner',
-        thumbnail: '/api/placeholder/300/200',
-        lastModified: 'Hace 2 semanas',
-        status: 'review',
-        client: 'Bar Central'
-      },
-      {
-        id: '6',
-        title: 'Packaging - Producto Nuevo',
-        type: 'other',
-        thumbnail: '/api/placeholder/300/200',
-        lastModified: 'Hace 3 semanas',
-        status: 'draft',
-        client: 'Empresa Alimentos'
-      }
+      { id: '1', title: 'SITIO WEB - RESTAURANTE EL SABOR', type: 'website', thumbnail: '', lastModified: 'HACE 2 HORAS', status: 'review', client: 'EL SABOR GOURMET' },
+      { id: '2', title: 'LOGO - BOUTIQUE HOTEL', type: 'logo', thumbnail: '', lastModified: 'AYER', status: 'completed', client: 'HOTEL CENTRAL' },
+      { id: '3', title: 'BANNER SOCIAL MEDIA - VERANO', type: 'social', thumbnail: '', lastModified: 'HACE 3 DÍAS', status: 'draft', client: 'MARCA DE ROPA' }
     ]
-    
-    setTimeout(() => {
-      setProjects(mockProjects)
-      setLoading(false)
-    }, 1000)
+    setTimeout(() => { setProjects(mockProjects); setLoading(false); }, 800)
   }, [])
 
-  const filteredProjects = projects.filter(project => {
-    const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         project.client?.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesFilter = filterType === 'all' || project.type === filterType
-    return matchesSearch && matchesFilter
-  })
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed': return 'text-green-400 bg-green-600/20 border-green-600/30'
-      case 'review': return 'text-yellow-400 bg-yellow-600/20 border-yellow-600/30'
-      case 'draft': return 'text-gray-400 bg-gray-600/20 border-gray-600/30'
-      default: return 'text-gray-400 bg-gray-600/20 border-gray-600/30'
-    }
-  }
-
-  const getTypeLabel = (type: string) => {
-    switch (type) {
-      case 'website': return 'Sitio Web'
-      case 'logo': return 'Logo'
-      case 'banner': return 'Banner'
-      case 'social': return 'Social Media'
-      case 'other': return 'Otro'
-      default: return type
-    }
-  }
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'completed': return 'Completado'
-      case 'review': return 'En Revisión'
-      case 'draft': return 'Borrador'
-      default: return status
-    }
-  }
-
-  const projectStats = {
-    total: projects.length,
-    completed: projects.filter(p => p.status === 'completed').length,
-    review: projects.filter(p => p.status === 'review').length,
-    draft: projects.filter(p => p.status === 'draft').length
-  }
-
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-white">Diseño - Canvas de Proyectos</h1>
-        <div className="flex items-center space-x-2">
-          <button className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 hover:scale-105">
-            <Upload className="w-4 h-4" />
-            <span>Subir Proyecto</span>
-          </button>
+    <div className="max-w-[95rem] mx-auto px-6 py-6 flex flex-col gap-6 font-sans selection:bg-[#7c3aed]/30">
+      
+      {/* HEADER & MINI STATS */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="flex items-center gap-6">
+          <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic">
+            Canvas <span className="text-[#7c3aed]">.</span>
+          </h1>
+          
+          {/* STATS STRIP - Estilo Unificado */}
+          <div className="flex items-center bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl border border-white/40 dark:border-white/10 px-4 py-1.5 rounded-full shadow-sm ring-1 ring-black/5 dark:ring-white/5">
+            {[
+              { label: 'Total', val: 3, color: 'text-[#7c3aed]' },
+              { label: 'Finalizados', val: 1, color: 'text-emerald-500' },
+              { label: 'Revisión', val: 1, color: 'text-orange-500' },
+              { label: 'Bocetos', val: 1, color: 'text-blue-500' },
+            ].map((stat, i) => (
+              <div key={i} className="flex items-center gap-2 px-3">
+                <span className={cn("text-[11px] font-black", stat.color)}>{stat.val}</span>
+                <span className="text-[8px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">{stat.label}</span>
+                {i < 3 && <div className="w-[1px] h-3 bg-slate-200 dark:bg-white/10 ml-3" />}
+              </div>
+            ))}
+          </div>
         </div>
+
+        <button className="flex items-center gap-2 px-6 py-2.5 bg-[#7c3aed] text-white rounded-full font-black uppercase tracking-widest text-[9px] hover:scale-[1.02] shadow-lg shadow-[#7c3aed]/20 active:scale-95">
+          <Plus size={12} strokeWidth={4} />
+          Nuevo Proyecto
+        </button>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-gradient-to-r from-purple-600/20 to-blue-600/20 backdrop-blur-lg rounded-lg p-4 border border-white/10">
-          <div className="flex items-center space-x-3">
-            <Folder className="w-6 h-6 text-purple-400" />
-            <div>
-              <p className="text-2xl font-bold text-white">{projectStats.total}</p>
-              <p className="text-sm text-gray-300">Total Proyectos</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-gradient-to-r from-green-600/20 to-blue-600/20 backdrop-blur-lg rounded-lg p-4 border border-white/10">
-          <div className="flex items-center space-x-3">
-            <Eye className="w-6 h-6 text-green-400" />
-            <div>
-              <p className="text-2xl font-bold text-white">{projectStats.completed}</p>
-              <p className="text-sm text-gray-300">Completados</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-gradient-to-r from-yellow-600/20 to-orange-600/20 backdrop-blur-lg rounded-lg p-4 border border-white/10">
-          <div className="flex items-center space-x-3">
-            <Filter className="w-6 h-6 text-yellow-400" />
-            <div>
-              <p className="text-2xl font-bold text-white">{projectStats.review}</p>
-              <p className="text-sm text-gray-300">En Revisión</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-gradient-to-r from-gray-600/20 to-purple-600/20 backdrop-blur-lg rounded-lg p-4 border border-white/10">
-          <div className="flex items-center space-x-3">
-            <Plus className="w-6 h-6 text-gray-400" />
-            <div>
-              <p className="text-2xl font-bold text-white">{projectStats.draft}</p>
-              <p className="text-sm text-gray-300">Borradores</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Controls */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+      {/* SEARCH COMPACTO - Estilo Glass Unificado */}
+      <div className="flex items-center justify-between gap-4 bg-white/60 dark:bg-white/[0.03] backdrop-blur-md border border-white/40 dark:border-white/10 p-1.5 rounded-2xl shadow-sm ring-1 ring-black/5">
+        <div className="flex-1 relative max-w-xs group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 group-focus-within:text-[#7c3aed] stroke-[3]" />
           <input
             type="text"
-            placeholder="Buscar proyectos..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white/5 backdrop-blur-lg rounded-lg border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors duration-200"
+            placeholder="BUSCAR..."
+            className="w-full bg-transparent pl-10 pr-4 py-1.5 text-[9px] font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white outline-none placeholder:text-slate-300 dark:placeholder:text-slate-600"
           />
         </div>
         
-        <select
-          value={filterType}
-          onChange={(e) => setFilterType(e.target.value)}
-          className="px-4 py-2 bg-white/5 backdrop-blur-lg rounded-lg border border-white/10 text-white focus:outline-none focus:border-purple-500 transition-colors duration-200"
-        >
-          <option value="all">Todos los tipos</option>
-          <option value="website">Sitios Web</option>
-          <option value="logo">Logos</option>
-          <option value="banner">Banners</option>
-          <option value="social">Social Media</option>
-          <option value="other">Otros</option>
-        </select>
-
-        <div className="flex items-center space-x-2 bg-white/5 backdrop-blur-lg rounded-lg border border-white/10 p-1">
-          <button
-            onClick={() => setViewMode('grid')}
-            className={`p-2 rounded ${viewMode === 'grid' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
-          >
-            <Grid className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setViewMode('list')}
-            className={`p-2 rounded ${viewMode === 'list' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
-          >
-            <List className="w-4 h-4" />
-          </button>
+        <div className="flex items-center gap-1">
+          <div className="flex bg-slate-100/50 dark:bg-black/20 p-1 rounded-xl border border-slate-200/50 dark:border-white/5">
+            <button onClick={() => setViewMode('grid')} className={cn("p-1.5 rounded-lg", viewMode === 'grid' ? "bg-white dark:bg-white/10 text-[#7c3aed] shadow-sm" : "text-slate-400")}>
+              <LayoutGrid size={14} strokeWidth={3} />
+            </button>
+            <button onClick={() => setViewMode('list')} className={cn("p-1.5 rounded-lg", viewMode === 'list' ? "bg-white dark:bg-white/10 text-[#7c3aed] shadow-sm" : "text-slate-400")}>
+              <List size={14} strokeWidth={3} />
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Projects Grid/List */}
-      <div className="bg-white/5 backdrop-blur-lg rounded-xl border border-white/10">
+      {/* GRID DE PROYECTOS - TARJETAS GLASS BUSCART */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-400"></div>
-          </div>
-        ) : filteredProjects.length === 0 ? (
-          <div className="text-center py-12">
-            <Palette className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-300">No se encontraron proyectos</p>
-          </div>
-        ) : viewMode === 'grid' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-            {filteredProjects.map((project) => (
-              <div key={project.id} className="bg-white/5 rounded-lg border border-white/10 overflow-hidden hover:bg-white/10 transition-colors duration-200">
-                <div className="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
-                  <Palette className="w-12 h-12 text-purple-400" />
-                </div>
-                <div className="p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-semibold text-white truncate">{project.title}</h3>
-                    <span className={`px-2 py-1 text-xs rounded-full border ${getStatusColor(project.status)}`}>
-                      {getStatusLabel(project.status)}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-300 mb-2">{project.client}</p>
-                  <div className="flex items-center justify-between text-xs text-gray-400">
-                    <span>{getTypeLabel(project.type)}</span>
-                    <span>{project.lastModified}</span>
-                  </div>
-                  <div className="flex space-x-2 mt-3">
-                    <button className="flex-1 py-1 bg-purple-600/20 text-purple-400 rounded hover:bg-purple-600/30 transition-colors duration-200">
-                      <Eye className="w-4 h-4 mx-auto" />
-                    </button>
-                    <button className="flex-1 py-1 bg-blue-600/20 text-blue-400 rounded hover:bg-blue-600/30 transition-colors duration-200">
-                      <Download className="w-4 h-4 mx-auto" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+           [1,2,3].map(i => <div key={i} className="aspect-[16/10] bg-slate-100 rounded-[2.5rem]" />)
         ) : (
-          <div className="divide-y divide-white/10">
-            {filteredProjects.map((project) => (
-              <div key={project.id} className="p-4 hover:bg-white/5 transition-colors duration-200">
-                <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Palette className="w-6 h-6 text-purple-400" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <h3 className="font-semibold text-white">{project.title}</h3>
-                      <span className={`px-2 py-1 text-xs rounded-full border ${getStatusColor(project.status)}`}>
-                        {getStatusLabel(project.status)}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-300 mb-1">{project.client}</p>
-                    <div className="flex items-center space-x-4 text-xs text-gray-400">
-                      <span>{getTypeLabel(project.type)}</span>
-                      <span>{project.lastModified}</span>
-                    </div>
-                  </div>
-                  <div className="flex space-x-2">
-                    <button className="p-2 bg-purple-600/20 text-purple-400 rounded hover:bg-purple-600/30 transition-colors duration-200">
-                      <Eye className="w-4 h-4" />
+          projects.map((project) => (
+            <div key={project.id} className="group bg-white/60 dark:bg-white/[0.02] backdrop-blur-xl border border-white dark:border-white/10 rounded-[2.5rem] p-4 hover:border-[#7c3aed]/40 hover:shadow-2xl hover:shadow-[#7c3aed]/5 ring-1 ring-black/[0.03] dark:ring-white/[0.02]">
+              {/* Thumbnail Area */}
+              <div className="aspect-[16/10] bg-slate-50 dark:bg-black/20 rounded-[2rem] mb-5 flex items-center justify-center relative overflow-hidden">
+                <Palette size={40} className="text-slate-200 dark:text-white/5 stroke-[1]" />
+                <div className="absolute top-4 left-4">
+                  <span className={cn(
+                    "px-3 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest border backdrop-blur-md",
+                    project.status === 'completed' ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" :
+                    project.status === 'review' ? "bg-orange-500/10 text-orange-500 border-orange-500/20" :
+                    "bg-white/80 dark:bg-white/10 text-slate-400 border-white/40"
+                  )}>
+                    {project.status}
+                  </span>
+                </div>
+              </div>
+
+              {/* Info Area */}
+              <div className="px-2 pb-2">
+                <p className="text-[8px] font-black text-[#7c3aed] uppercase tracking-[0.2em] mb-1">{project.client}</p>
+                <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight leading-tight group-hover:text-[#7c3aed]">
+                  {project.title}
+                </h3>
+                
+                <div className="mt-4 pt-4 border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
+                  <span className="text-[8px] font-bold text-slate-400 uppercase italic">{project.lastModified}</span>
+                  <div className="flex gap-1">
+                    <button className="p-2 bg-white/50 dark:bg-white/5 rounded-xl text-slate-300 hover:text-[#7c3aed] transition-all">
+                      <Eye size={14} strokeWidth={3} />
                     </button>
-                    <button className="p-2 bg-blue-600/20 text-blue-400 rounded hover:bg-blue-600/30 transition-colors duration-200">
-                      <Download className="w-4 h-4" />
+                    <button className="p-2 bg-white/50 dark:bg-white/5 rounded-xl text-slate-300 hover:text-[#7c3aed] transition-all">
+                      <Download size={14} strokeWidth={3} />
                     </button>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))
         )}
-      </div>
-
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <button className="p-4 bg-gradient-to-r from-purple-600/20 to-blue-600/20 backdrop-blur-lg rounded-lg border border-white/10 hover:bg-white/10 transition-colors duration-200">
-          <h3 className="font-semibold text-white mb-2">Conectar Almacenamiento</h3>
-          <p className="text-sm text-gray-300">Google Drive, Dropbox, etc.</p>
-        </button>
-        <button className="p-4 bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-lg rounded-lg border border-white/10 hover:bg-white/10 transition-colors duration-200">
-          <h3 className="font-semibold text-white mb-2">Crear Nuevo Proyecto</h3>
-          <p className="text-sm text-gray-300">Iniciar desde cero o plantilla</p>
-        </button>
       </div>
     </div>
   )

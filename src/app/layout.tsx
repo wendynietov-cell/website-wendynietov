@@ -5,11 +5,14 @@ import { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Wendy Nieto - Estratega de Plataformas',
   description: 'Ayudo a restaurantes, hoteles, cocinas ocultas y e-commerces a multiplicar sus ingresos.',
+  icons: {
+    icon: '/favicon.ico',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es">
+    <html lang="es" data-scroll-behavior="smooth">
       <body className="relative">
         <BackgroundAtmosphere />
         <div className="relative z-10">{children}</div>

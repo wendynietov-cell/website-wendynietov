@@ -52,7 +52,7 @@ export function Footer() {
             Email
           </a>
           <Link
-            href="/admin/login"
+            href="/admin/robust-login"
             className="flex items-center gap-1.5 text-white/20 hover:text-white/60 transition-colors text-xs"
           >
             <Lock size={12} />
